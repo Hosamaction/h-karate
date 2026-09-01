@@ -31,6 +31,17 @@ function saveDB()  { fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf
 loadDB();
 
 // ── Middleware ────────────────────────────────────────────────────────────────
+// CORS - allow admin panel to access from any origin
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, x-admin-secret');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // Raw body needed for Stripe webhook signature verification
 app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
