@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H Karate — License</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-base); }
+    .license-card {
+      width: 480px; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 40px 36px; text-align: center;
+    }
+    .logo-mark { font-size: 3rem; margin-bottom: 16px; }
+    .app-name  { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .app-name span { background: linear-gradient(135deg, var(--red), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .tagline   { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+
+    .status-box {
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 28px;
+      font-size: 0.85rem; color: var(--red); display: none;
+    }
+    .status-box.show { display: block; }
+    .status-box.ok   { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.25); color: var(--green); }
+    .status-box.warn { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: var(--gold); }
+
+    .drop-zone {
+      border: 2px dashed var(--border); border-radius: 14px;
+      padding: 36px 20px; cursor: pointer; transition: var(--transition);
+      margin-bottom: 20px; position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .drop-title { font-weight: 700; font-size: 0.95rem; color: var(--text-white); margin-bottom: 4px; }
+    .drop-sub   { font-size: 0.78rem; color: var(--text-muted); }
+
+    .file-selected { background: var(--accent-dim); border-color: var(--accent); }
+    .file-selected .drop-icon::after { content: ' ✅'; }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-muted); font-size: 0.78rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .machine-id-box {
+      background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      color: var(--text-muted); word-break: break-all; text-align: left; margin-bottom: 20px;
+    }
+    .machine-id-label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; text-align: left; }
+
+    .activate-btn { width: 100%; margin-bottom: 12px; }
+    .buy-link { font-size: 0.8rem; color: var(--text-muted); }
+    .buy-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .buy-link a:hover { text-decoration: underline; }
+
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .expiry-info { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+    .expiry-info strong { color: var(--green); }
+  </style>
+</head>
+<body>
+  <div class="license-card">
+    <div class="logo-mark">🥋</div>
+    <div class="app-name">H <span>KARATE</span></div>
+    <div class="tagline">Professional Tournament Scoring System</div>
+
+    <div class="status-box" id="statusBox"></div>
+
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="licenseFile" accept=".json,.hkl" />
+      <div class="drop-icon" id="dropIcon">📄</div>
+      <div class="drop-title" id="dropTitle">Drop your license file here</div>
+      <div class="drop-sub">or click to browse — <code>.json</code> or <code>.hkl</code></div>
+    </div>
+
+    <button class="btn btn-primary btn-lg activate-btn" id="activateBtn" onclick="activate()" disabled>
+      Activate License
+    </button>
+
+    <div class="divider">Your Machine ID</div>
+    <div class="machine-id-label">Send this to support if you need to transfer your license:</div>
+    <div class="machine-id-box" id="machineIdBox">Loading…</div>
+
+    <div class="buy-link">
+      Don't have a license? <a href="https://h-karate-app.web.app/#pricing" onclick="openBuy(event)">Get one here →</a>
+    </div>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    let _licenseObj = null;
+
+    // Load machine ID
+    window.api.invoke('license:get-machine-id').then(id => {
+      document.getElementById('machineIdBox').textContent = id || 'unavailable';
+    });
+
+    // File input
+    const fileInput = document.getElementById('licenseFile');
+    const dropZone  = document.getElementById('dropZone');
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) readFile(fileInput.files[0]);
+    });
+
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) readFile(file);
+    });
+
+    function readFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const obj = JSON.parse(e.target.result);
+          if (!obj.payload || !obj.signature) {
+            showStatus('error', '❌ Invalid license file format. Make sure you downloaded the correct file.');
+            _licenseObj = null;
+            document.getElementById('activateBtn').disabled = true;
+            return;
+          }
+          _licenseObj = obj;
+          dropZone.classList.add('file-selected');
+          document.getElementById('dropTitle').textContent = `✅ ${file.name}`;
+          document.getElementById('activateBtn').disabled = false;
+          showStatus('', '');
+        } catch(_) {
+          showStatus('error', '❌ Could not read file. Make sure it is a valid JSON license file.');
+          _licenseObj = null;
+          document.getElementById('activateBtn').disabled = true;
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function activate() {
+      if (!_licenseObj) return;
+      const btn = document.getElementById('activateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Activating…';
+
+      const result = await window.api.invoke('license:activate', _licenseObj);
+
+      if (result.ok) {
+        showStatus('ok', `✅ License activated! Plan: ${result.plan} — ${result.daysLeft} days remaining.`);
+        btn.textContent = '✅ Activated — Opening app…';
+        // main.js will close this window and open main window
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Activate License';
+        const msgs = {
+          invalid_signature: '❌ License file is invalid or has been tampered with.',
+          expired:           '❌ This license has expired. Please renew at h-karate-app.web.app.',
+          machine_mismatch:  '❌ This license is already activated on a different machine.',
+          revoked:           '❌ This license has been revoked. Please contact support.',
+          unknown_license:   '❌ License not found. Please contact support.',
+          offline:           '⚠️ Cannot reach activation server. Check your internet connection.',
+          timeout:           '⚠️ Activation server timed out. Try again in a moment.',
+          malformed:         '❌ License file is corrupted.',
+        };
+        showStatus('error', msgs[result.reason] || `❌ Activation failed: ${result.reason}`);
+      }
+    }
+
+    function showStatus(type, msg) {
+      const box = document.getElementById('statusBox');
+      box.textContent = msg;
+      box.className = 'status-box' + (type ? ` show ${type}` : '');
+    }
+
+    function openBuy(e) {
+      e.preventDefault();
+      window.api.invoke('app:open-url', 'https://h-karate-app.web.app/#pricing');
+    }
+  </script>
+</body>
+</html>

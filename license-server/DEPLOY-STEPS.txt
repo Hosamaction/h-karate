@@ -1,0 +1,124 @@
+====================================================================
+H KARATE LICENSE SERVER — DEPLOYMENT STEPS
+====================================================================
+
+✅ Railway CLI is installed!
+
+Follow these steps in PowerShell:
+
+====================================================================
+STEP 1: Login to Railway
+====================================================================
+
+Run:
+  railway login
+
+This will:
+- Open your browser
+- Ask you to sign in with GitHub
+- Authorize Railway CLI
+
+====================================================================
+STEP 2: Initialize Project
+====================================================================
+
+Run:
+  railway init
+
+When prompted:
+- Choose: "Create new project"
+- Name it: hkarate-license-server
+
+====================================================================
+STEP 3: Deploy
+====================================================================
+
+Run:
+  railway up
+
+Wait ~2 minutes while it deploys.
+
+====================================================================
+STEP 4: Set Environment Variables
+====================================================================
+
+A) Generate admin secret:
+  
+PowerShell command:
+  $secret = [System.Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 }))
+  Write-Host "Your secret: $secret"
+  railway variables set ADMIN_SECRET="$secret"
+
+B) Set private key:
+
+PowerShell command to see your key:
+  Get-Content keys.json | ConvertFrom-Json | Select-Object -ExpandProperty privateKey
+
+Then copy the ENTIRE key (all lines including BEGIN/END) and run:
+  railway variables set PRIVATE_KEY="<paste-key-here>"
+
+Make sure to include the quotes and all lines!
+
+====================================================================
+STEP 5: Get Your Server URL
+====================================================================
+
+Run:
+  railway domain
+
+Copy the URL that appears (example: hkarate-license-server-production.up.railway.app)
+
+====================================================================
+STEP 6: Update validator.js
+====================================================================
+
+1. Open: c:\Users\hosam\Documents\H Karate\v0.6\license\validator.js
+
+2. Find line 26 that says:
+   const LICENSE_SERVER = 'https://your-license-server.com';
+
+3. Replace with your Railway URL:
+   const LICENSE_SERVER = 'https://hkarate-license-server-production.up.railway.app';
+
+====================================================================
+STEP 7: Test
+====================================================================
+
+Replace YOUR-URL below and run:
+  curl https://YOUR-URL.up.railway.app/health
+
+Should return: {"status":"ok","timestamp":...}
+
+====================================================================
+STEP 8: Rebuild App
+====================================================================
+
+Run:
+  cd ..\..
+  .\build.bat
+
+====================================================================
+✅ DONE!
+====================================================================
+
+Your license server is deployed and your app is rebuilt with the new URL.
+
+Next: Create GitHub release and deploy website!
+
+====================================================================
+TROUBLESHOOTING
+====================================================================
+
+View logs:
+  railway logs
+
+View variables:
+  railway variables
+
+Redeploy:
+  railway up
+
+Check status:
+  railway status
+
+====================================================================
