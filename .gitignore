@@ -18,6 +18,12 @@ license-server/licenses.json
 license-server/.env
 license-server/temp-secret.txt
 license-server/temp-key.txt
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!firebase.json
+!.firebaserc
 
 # OS
 .DS_Store
