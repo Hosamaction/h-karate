@@ -1,12 +1,41 @@
+# Node modules
 node_modules/
+
+# Build output
 dist/
+
+# Logs
 *.log
-.DS_Store
-Thumbs.db
-*.tmp
-*.temp
-data/
+npm-debug.log*
+
+# Environment
 .env
 .env.local
+
+# Sensitive files
+license-server/keys.json
+license-server/licenses.json
+license-server/.env
+license-server/temp-secret.txt
+license-server/temp-key.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Firebase
 firebase-debug.log
 .firebase/
+
+# Data
+data/

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H Karate — Home</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    .hero { text-align: center; padding: 48px 0 40px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600; color: var(--red); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 20px; }
+    .hero h1 { font-size: 3rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 12px; }
+    .hero h1 span { background: linear-gradient(135deg, var(--red), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.05rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 36px; }
+
+    .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+    .mode-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 32px 24px; text-align: center; cursor: pointer; transition: var(--transition-slow); position: relative; overflow: hidden; }
+    .mode-card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: var(--transition); }
+    .mode-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-xl); }
+    .mode-card:hover::before { opacity: 1; }
+    .mode-card.kumite::before  { background: radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.12), transparent 70%); }
+    .mode-card.kata::before    { background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.12), transparent 70%); }
+    .mode-card.allin::before   { background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.12), transparent 70%); }
+    .mode-card.kumite:hover { border-color: rgba(239,68,68,0.4); }
+    .mode-card.kata:hover   { border-color: rgba(59,130,246,0.4); }
+    .mode-card.allin:hover  { border-color: rgba(245,158,11,0.4); }
+    .mode-icon  { font-size: 3.5rem; margin-bottom: 16px; display: block; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); }
+    .mode-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+    .mode-jp    { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.05em; }
+    .mode-desc  { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+    .mode-tags  { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .mode-tag   { padding: 3px 10px; border-radius: var(--radius-full); font-size: 0.72rem; font-weight: 600; }
+    .mode-tag.red    { background: var(--red-dim);    color: var(--red); }
+    .mode-tag.blue   { background: var(--blue-dim);   color: var(--blue); }
+    .mode-tag.gold   { background: var(--gold-dim);   color: var(--gold); }
+    .mode-tag.green  { background: var(--green-dim);  color: var(--green); }
+    .mode-tag.purple { background: var(--purple-dim); color: var(--purple); }
+
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .server-card .server-url { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--green); background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: var(--radius-md); padding: 10px 14px; margin: 12px 0; word-break: break-all; }
+    .qr-wrap { display: flex; justify-content: center; margin: 12px 0; }
+    .judge-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; max-height: 160px; overflow-y: auto; }
+    .judge-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: var(--radius-md); font-size: 0.85rem; }
+    .quick-actions { display: flex; flex-direction: column; gap: 10px; }
+    .quick-actions .btn { justify-content: flex-start; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="logo" href="home.html">🥋 H <span>KARATE</span></a>
+      <nav class="header-nav">
+        <a href="home.html" class="active" data-i18n="nav_home">Home</a>
+        <a href="kumite.html" data-i18n="nav_kumite">Kumite</a>
+        <a href="kata.html" data-i18n="nav_kata">Kata 1v1</a>
+        <a href="kata-allin.html" data-i18n="nav_kataAllin">Kata All-In</a>
+        <a href="bracket.html" data-i18n="nav_bracket">Bracket</a>
+        <a href="competitors.html" data-i18n="nav_competitors">Competitors</a>
+        <a href="history.html" data-i18n="nav_history">History</a>
+        <a href="settings.html" data-i18n="nav_settings">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <div class="flex-center gap-8" id="serverStatusBadge">
+          <span class="status-dot offline" id="serverDot"></span>
+          <span class="text-sm text-muted" id="serverStatusText">Server Off</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="toggleServer()" id="serverToggleBtn">Start Server</button>
+        <button class="btn btn-primary btn-sm" onclick="openDisplay()">📺 Display</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="hero anim-up">
+        <div class="hero-badge" data-i18n="home_badge">🥋 v3 — Red Belt Edition</div>
+        <h1>Tournament <span data-i18n="home_title">Scoring</span></h1>
+        <p data-i18n="home_subtitle">Professional karate scoring for kumite and kata competitions. Real-time sync across all screens and web judges.</p>
+      </div>
+
+      <div class="mode-grid anim-up">
+        <div class="mode-card kumite" onclick="go('kumite.html')">
+          <span class="mode-icon">🥊</span>
+          <div class="mode-title" data-i18n="kumite_title">Kumite</div>
+          <div class="mode-jp" data-i18n="kumite_jp">組手 — Fighting</div>
+          <div class="mode-desc" data-i18n="kumite_desc">Head-to-head fighting with real-time point scoring, penalties, and timed matches.</div>
+          <div class="mode-tags">
+            <span class="mode-tag red">Yūkō +1</span>
+            <span class="mode-tag red">Waza-ari +2</span>
+            <span class="mode-tag red">Ippon +3</span>
+            <span class="mode-tag gold">Timer</span>
+          </div>
+        </div>
+
+        <div class="mode-card kata" onclick="go('kata.html')">
+          <span class="mode-icon">🥋</span>
+          <div class="mode-title" data-i18n="kata_title">Kata 1v1</div>
+          <div class="mode-jp" data-i18n="kata_jp">形 — Form (Head-to-Head)</div>
+          <div class="mode-desc" data-i18n="kata_desc">Two competitors judged by a panel. Technical and athletic scores averaged with high/low dropped.</div>
+          <div class="mode-tags">
+            <span class="mode-tag blue">Technical 0–7</span>
+            <span class="mode-tag blue">Athletic 0–3</span>
+            <span class="mode-tag green">1–7 Judges</span>
+          </div>
+        </div>
+
+        <div class="mode-card allin" onclick="go('kata-allin.html')">
+          <span class="mode-icon">🏆</span>
+          <div class="mode-title" data-i18n="allin_title">Kata All-In</div>
+          <div class="mode-jp" data-i18n="allin_jp">形 — Tournament Bracket</div>
+          <div class="mode-desc" data-i18n="allin_desc">Full elimination tournament. Multiple rounds, automatic bracket advancement, live leaderboard.</div>
+          <div class="mode-tags">
+            <span class="mode-tag gold">Elimination</span>
+            <span class="mode-tag purple">Bracket</span>
+            <span class="mode-tag green">Leaderboard</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-row anim-up">
+        <div class="card server-card">
+          <div class="card-header">
+            <h3 data-i18n="home_serverTitle">Web Judge Server</h3>
+            <span class="badge badge-green hidden" id="serverOnBadge">● LIVE</span>
+          </div>
+          <div class="card-body">
+            <p class="text-sm" data-i18n="home_serverDesc">Judges connect from any device on the same network using a browser — no app needed.</p>
+            <div id="serverOffState">
+              <div class="mt-16">
+                <button class="btn btn-green w-full" onclick="toggleServer()" data-i18n="home_startServer">Start Judge Server</button>
+              </div>
+            </div>
+            <div id="serverOnState" class="hidden">
+              <div class="server-url" id="serverUrl">—</div>
+              <div class="qr-wrap" id="qrWrap"></div>
+              <div class="flex-between mt-8">
+                <button class="btn btn-ghost btn-sm" onclick="openBrowser()" data-i18n="home_openBrowser">Open in Browser</button>
+                <button class="btn btn-danger btn-sm" onclick="toggleServer()" data-i18n="home_stopServer">Stop Server</button>
+              </div>
+              <div class="judge-list" id="judgeList">
+                <div class="text-muted text-sm text-center" id="noJudgesMsg" data-i18n="home_noJudges">No judges connected yet</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3 data-i18n="home_quickTitle">Quick Actions</h3></div>
+          <div class="card-body quick-actions">
+            <button class="btn btn-ghost" onclick="openDisplay()" data-i18n="home_q_display">📺 Open Scoreboard Display</button>
+            <button class="btn btn-ghost" onclick="go('kumite.html')" data-i18n="home_q_kumite">🥊 New Kumite Match</button>
+            <button class="btn btn-ghost" onclick="go('kata.html')" data-i18n="home_q_kata">🥋 New Kata 1v1 Match</button>
+            <button class="btn btn-ghost" onclick="go('kata-allin.html')" data-i18n="home_q_allin">🏆 New Kata Tournament</button>
+            <button class="btn btn-ghost" onclick="go('bracket.html')" data-i18n="home_q_bracket">📊 Tournament Bracket</button>
+            <button class="btn btn-ghost" onclick="go('history.html')" data-i18n="home_q_history">📋 Match History</button>
+            <button class="btn btn-ghost" onclick="go('settings.html')" data-i18n="home_q_settings">⚙️ Settings</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/sound.js"></script>
+  <script src="../js/theme-switcher.js"></script>
+  <script src="../js/keyboard-shortcuts.js"></script>
+  <script src="../js/qr.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script>
+    KeyboardShortcuts.init('global');
+    let serverRunning = false;
+    let judgeCount = 0;
+
+    function go(page) { window.location.href = page; }
+    function openDisplay() { window.api.send('display:open'); Toast.info('Display', 'Scoreboard window opened'); }
+
+    function toggleServer() {
+      if (!serverRunning) window.api.send('server:start');
+      else window.api.send('server:stop');
+    }
+
+    function openBrowser() { window.api.send('server:open-browser'); }
+
+    function setServerOn(ip, port) {
+      serverRunning = true;
+      const url = `http://${ip}:${port}`;
+      Utils.setText('serverUrl', url);
+      Utils.show('serverOnState'); Utils.hide('serverOffState'); Utils.show('serverOnBadge');
+      document.getElementById('serverDot').className = 'status-dot online';
+      Utils.setText('serverStatusText', `${ip}:${port}`);
+      document.getElementById('serverToggleBtn').textContent = 'Stop Server';
+      generateQR(url);
+    }
+
+    function setServerOff() {
+      serverRunning = false; judgeCount = 0;
+      Utils.hide('serverOnState'); Utils.show('serverOffState'); Utils.hide('serverOnBadge');
+      document.getElementById('serverDot').className = 'status-dot offline';
+      Utils.setText('serverStatusText', 'Server Off');
+      document.getElementById('serverToggleBtn').textContent = 'Start Server';
+      document.getElementById('qrWrap').innerHTML = '';
+    }
+
+    function generateQR(url) {
+      const wrap = document.getElementById('qrWrap');
+      wrap.innerHTML = '';
+      try {
+        const svg = QR.toSVG(url, 140);
+        svg.style.borderRadius = '8px';
+        wrap.appendChild(svg);
+      } catch(_) {
+        const div = document.createElement('div');
+        div.style.cssText = 'width:140px;height:140px;background:rgba(255,255,255,0.05);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--text-muted);text-align:center;padding:8px;';
+        div.textContent = url;
+        wrap.appendChild(div);
+      }
+    }
+
+    function updateJudgeList(count) {
+      judgeCount = count;
+      const list = document.getElementById('judgeList');
+      const noMsg = document.getElementById('noJudgesMsg');
+      if (count === 0) { if (noMsg) noMsg.style.display = 'block'; return; }
+      if (noMsg) noMsg.style.display = 'none';
+      list.innerHTML = '';
+      for (let i = 1; i <= count; i++) {
+        const item = document.createElement('div'); item.className = 'judge-item';
+        const dot = document.createElement('span'); dot.className = 'status-dot online';
+        const lbl = document.createElement('span'); lbl.textContent = `Judge ${i}`;
+        item.appendChild(dot); item.appendChild(lbl); list.appendChild(item);
+      }
+    }
+
+    window.api.on('server:started', ({ ip, port }) => { setServerOn(ip, port); Sound.gong(); Toast.success('Server Started', `Judges can connect at ${ip}:${port}`); });
+    window.api.on('server:stopped', () => { setServerOff(); Toast.info('Server Stopped', 'Web judge server is offline'); });
+    window.api.on('server:judge-connected', ({ count, judgeNumber }) => { updateJudgeList(count); Sound.submit(); Toast.success('Judge Connected', `Judge ${judgeNumber} joined`); });
+    window.api.on('server:judge-disconnected', ({ count }) => { updateJudgeList(count); Toast.warning('Judge Disconnected', `${count} judge(s) remaining`); });
+
+    window.api.invoke('server:status').then(s => { if (s && s.running) setServerOn(s.ip, s.port); });
+    window.api.invoke('settings:get-all').then(s => {
+      if (!s) return;
+      Sound.setEnabled(s.soundEnabled !== 'false');
+      Sound.setVolume(s.soundVolume || 0.8);
+    });
+    I18N.init();
+  </script>
+</body>
+</html>
