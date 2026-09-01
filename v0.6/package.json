@@ -1,0 +1,74 @@
+{
+  "name": "h-karate",
+  "version": "0.6.0",
+  "description": "H Karate — Professional Karate Tournament Management System. Unlimited competitors, flat-rate pricing starting at $12.99/month. No per-event fees.",
+  "main": "main.js",
+  "scripts": {
+    "start": "start /b electron .",
+    "dev": "electron . --dev",
+    "build": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win --x64",
+    "build:portable": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win portable"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "electron": "^37.2.6",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.hkarate.scoring",
+    "productName": "H Karate Scoring",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "license/validator.js",
+      "renderer/**/*",
+      "assets/**/*",
+      "web/**/*",
+      "node_modules/**/*"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "Hosamaction",
+      "repo": "h-karate"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "sign": null,
+      "verifyUpdateCodeSignature": false,
+      "publisherName": "H Karate"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "H Karate Scoring"
+    },
+    "portable": {
+      "artifactName": "H-Karate-Scoring-v${version}-portable.exe"
+    }
+  },
+  "author": "Hosam Sheboun",
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,123 @@
+/**
+ * Light Theme for H Karate
+ * Professional light color scheme
+ */
+
+:root[data-theme="light"] {
+  /* Background colors */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-hover: #e2e8f0;
+
+  /* Text colors */
+  --text-white: #0f172a;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  /* Border colors */
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
+  /* Accent colors (keep vibrant) */
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-dim: rgba(99, 102, 241, 0.1);
+
+  /* Status colors */
+  --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.1);
+  --red-glow: rgba(239, 68, 68, 0.3);
+
+  --blue: #3b82f6;
+  --blue-dim: rgba(59, 130, 246, 0.1);
+  --blue-glow: rgba(59, 130, 246, 0.3);
+
+  --green: #10b981;
+  --green-dim: rgba(16, 185, 129, 0.1);
+
+  --gold: #f59e0b;
+  --gold-dim: rgba(245, 158, 11, 0.1);
+
+  --purple: #a855f7;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Header adjustments for light theme */
+:root[data-theme="light"] .app-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid var(--border);
+}
+
+:root[data-theme="light"] .app-header .logo span {
+  color: var(--accent);
+}
+
+/* Card shadows in light mode */
+:root[data-theme="light"] .card {
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="light"] .card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Button adjustments */
+:root[data-theme="light"] .btn-ghost {
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .btn-ghost:hover {
+  background: var(--bg-hover);
+  color: var(--text-white);
+}
+
+/* Input fields */
+:root[data-theme="light"] input,
+:root[data-theme="light"] select,
+:root[data-theme="light"] textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] input:focus,
+:root[data-theme="light"] select:focus,
+:root[data-theme="light"] textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* Score displays */
+:root[data-theme="light"] .score-lg,
+:root[data-theme="light"] .score-display {
+  text-shadow: none;
+}
+
+/* Modal backdrop */
+:root[data-theme="light"] .modal {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Toast notifications */
+:root[data-theme="light"] .toast {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Table rows */
+:root[data-theme="light"] .table-row:hover {
+  background: var(--bg-hover);
+}
+
+/* Smooth theme transition */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

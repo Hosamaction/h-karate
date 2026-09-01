@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H Karate — Competitors Database</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    .search-bar { display: flex; gap: 12px; margin-bottom: 20px; }
+    .search-bar input { flex: 0 1 260px; min-width: 220px; padding: 10px 14px; font-size: 0.95rem; }
+    #emptyState { display: none; text-align: center; padding: 3rem; color: var(--text-muted); }
+    #emptyState.show { display: block; }
+    .competitor-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-lg); 
+      padding: 16px; 
+      transition: var(--transition); 
+    }
+    .competitor-card:hover { 
+      border-color: var(--accent); 
+      transform: translateY(-2px); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .comp-avatar { 
+      width: 50px; 
+      height: 50px; 
+      border-radius: 50%; 
+      background: linear-gradient(135deg, var(--accent), var(--purple)); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 1.5rem; 
+      font-weight: 700;
+      color: white;
+    }
+    .comp-name { 
+      font-size: 1.1rem; 
+      font-weight: 700; 
+      color: var(--text-white); 
+      margin-bottom: 4px;
+    }
+    .comp-belt.belt-white { background: rgba(255,255,255,0.15); color: #fff; }
+    .comp-belt.belt-yellow { background: rgba(234,179,8,0.2); color: #eab308; }
+    .comp-belt.belt-orange { background: rgba(249,115,22,0.2); color: #f97316; }
+    .comp-belt.belt-green { background: rgba(34,197,94,0.2); color: #22c55e; }
+    .comp-belt.belt-blue { background: rgba(59,130,246,0.2); color: #3b82f6; }
+    .comp-belt.belt-brown { background: rgba(120,53,15,0.3); color: #d2691e; }
+    .comp-belt.belt-black { background: rgba(0,0,0,0.5); color: #fff; border: 1px solid #666; }
+    .modal { 
+      display: none; 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.8); 
+      backdrop-filter: blur(10px); 
+      z-index: 1000; 
+      align-items: center; 
+      justify-content: center; 
+    }
+    .modal.active { display: flex; }
+    .modal-content { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-xl); 
+      padding: 32px; 
+      max-width: 600px; 
+      width: 90%; 
+      max-height: 90vh; 
+      overflow-y: auto; 
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { 
+      display: block; 
+      font-size: 0.9rem; 
+      font-weight: 600; 
+      color: var(--text-secondary); 
+      margin-bottom: 6px; 
+    }
+    .form-group input, .form-group select, .form-group textarea { 
+      width: 100%; 
+      padding: 10px 12px; 
+      background: var(--bg-input); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-md); 
+      color: var(--text-white); 
+      font-size: 0.95rem;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
+      outline: none; 
+      border-color: var(--accent); 
+      box-shadow: 0 0 0 3px var(--accent-dim); 
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="logo" href="home.html">🥋 H <span>KARATE</span></a>
+      <nav class="header-nav">
+        <a href="home.html" data-i18n="nav_home">Home</a>
+        <a href="kumite.html" data-i18n="nav_kumite">Kumite</a>
+        <a href="kata.html" data-i18n="nav_kata">Kata 1v1</a>
+        <a href="kata-allin.html" data-i18n="nav_kataAllin">Kata All-In</a>
+        <a href="bracket.html" data-i18n="nav_bracket">Bracket</a>
+        <a href="competitors.html" class="active" data-i18n="nav_competitors">Competitors</a>
+        <a href="history.html" data-i18n="nav_history">History</a>
+        <a href="settings.html" data-i18n="nav_settings">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()" data-i18n="btn_addCompetitor">➕ Add Competitor</button>
+        <button class="btn btn-ghost btn-sm" onclick="window.location.href='home.html'" data-i18n="btn_back">← Back</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="flex-between mb-24">
+        <div>
+          <h2 data-i18n="comp_title">👥 Competitors Database</h2>
+          <p class="text-sm text-muted" data-i18n="comp_subtitle">Manage competitor profiles and history</p>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-ghost btn-sm" onclick="exportCompetitors()" data-i18n="btn_exportJSON">Export JSON</button>
+          <button class="btn btn-ghost btn-sm" onclick="importCompetitors()" data-i18n="btn_import">Import</button>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" id="searchComp" placeholder="Search by name, club, or belt..." oninput="searchCompetitors()" data-i18n-attr="placeholder" data-i18n="comp_searchPlaceholder">
+        <select id="filterBelt" onchange="searchCompetitors()">
+          <option value="all">All Belts</option>
+          <option value="white">White</option>
+          <option value="yellow">Yellow</option>
+          <option value="orange">Orange</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="brown">Brown</option>
+          <option value="black">Black</option>
+        </select>
+      </div>
+
+      <div id="competitorsList"></div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="compModal" class="modal">
+    <div class="modal-content">
+      <div class="flex-between mb-24">
+        <h3 id="modalTitle" data-i18n="comp_addNew">Add New Competitor</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+      </div>
+      
+      <form id="compForm" onsubmit="saveCompetitor(); return false;">
+        <div class="form-group">
+          <label data-i18n="comp_fullName">Full Name *</label>
+          <input type="text" id="compFullName" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="comp_club">Club / Team</label>
+            <input type="text" id="compClub">
+          </div>
+          <div class="form-group">
+            <label data-i18n="comp_country">Country</label>
+            <input type="text" id="compCountry">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="comp_belt">Belt</label>
+            <select id="compBelt">
+              <option value="white">White</option>
+              <option value="yellow">Yellow</option>
+              <option value="orange">Orange</option>
+              <option value="green">Green</option>
+              <option value="blue">Blue</option>
+              <option value="brown">Brown</option>
+              <option value="black">Black</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="comp_category">Category</label>
+            <input type="text" id="compCategory" placeholder="e.g. Senior, U21">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="comp_age">Age</label>
+            <input type="number" id="compAge" min="5" max="99">
+          </div>
+          <div class="form-group">
+            <label data-i18n="comp_weight">Weight (kg)</label>
+            <input type="number" id="compWeight" step="0.1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="comp_notes">Notes</label>
+          <textarea id="compNotes" rows="3"></textarea>
+        </div>
+
+        <div class="flex gap-12 mt-24">
+          <button type="submit" class="btn btn-primary flex-1" data-i18n="btn_save">💾 Save</button>
+          <button type="button" class="btn btn-ghost flex-1" onclick="closeModal()" data-i18n="btn_cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/theme-switcher.js"></script>
+  <script src="../js/keyboard-shortcuts.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/competitors.js"></script>
+  <script>
+    I18N.init();
+    KeyboardShortcuts.init('global');
+  </script>
+</body>
+</html>
