@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, Menu, screen, shell, nativeTheme, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const http = require('http');
 const fs   = require('fs');
@@ -284,6 +285,91 @@ async function checkLicenseOnStartup() {
   }
 }
 
+// ── Auto-update configuration ─────────────────────────────────────────────────
+autoUpdater.autoDownload = false; // Ask before downloading
+autoUpdater.autoInstallOnAppQuit = true; // Install on quit
+
+autoUpdater.on('update-available', (info) => {
+  log('info', `Update available: v${info.version}`);
+  
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: 'Update Available',
+      message: `H Karate v${info.version} is available!`,
+      detail: `You're running v${app.getVersion()}. The update will download in the background.`,
+      buttons: ['Download Update', 'Later'],
+      defaultId: 0,
+      cancelId: 1
+    }).then(({ response }) => {
+      if (response === 0) {
+        autoUpdater.downloadUpdate();
+        
+        // Show download progress
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('update:downloading', { version: info.version });
+        }
+      }
+    });
+  }
+});
+
+autoUpdater.on('update-not-available', () => {
+  log('info', `App is up to date (v${app.getVersion()})`);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  log('info', `Download progress: ${progressObj.percent.toFixed(1)}%`);
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update:progress', progressObj);
+  }
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  log('info', `Update downloaded: v${info.version}`);
+  
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: 'Update Ready',
+      message: `H Karate v${info.version} has been downloaded!`,
+      detail: 'The update will be installed when you close the app.',
+      buttons: ['Restart Now', 'Later'],
+      defaultId: 0,
+      cancelId: 1
+    }).then(({ response }) => {
+      if (response === 0) {
+        autoUpdater.quitAndInstall();
+      }
+    });
+  }
+});
+
+autoUpdater.on('error', (err) => {
+  log('error', 'Auto-updater error', err);
+  // Fail silently - don't bother user
+});
+
+// ── Auto-update check on startup ──────────────────────────────────────────────
+async function checkForUpdatesOnStartup() {
+  try {
+    log('info', `Checking for updates... (current: v${app.getVersion()})`);
+    
+    // Configure update feed URL
+    autoUpdater.setFeedURL({
+      provider: 'github',
+      owner: 'Hosamaction',
+      repo: 'h-karate'
+    });
+    
+    // Check for updates
+    await autoUpdater.checkForUpdates();
+  } catch (e) {
+    log('info', `Update check failed: ${e.message}`);
+    // Fail silently
+  }
+}
+
 // ── App lifecycle ─────────────────────────────────────────────────────────────
 process.on('uncaughtException',  (err) => log('error', 'uncaughtException', err));
 process.on('unhandledRejection', (err) => log('error', 'unhandledRejection', err));
@@ -293,6 +379,8 @@ app.whenReady().then(() => {
   initStore();
   buildMenu();
   checkLicenseOnStartup();
+  // Auto-check for updates on startup
+  setTimeout(() => checkForUpdatesOnStartup(), 3000);
 });
 
 app.on('window-all-closed', () => { stopWebServer(); if (process.platform !== 'darwin') app.quit(); });
@@ -443,7 +531,7 @@ ipcMain.handle('app:check-update', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
     const current = pkg.version;
     const data = await new Promise((resolve, reject) => {
-      https.get('https://api.github.com/repos/hosam-sheboun/h-karate/releases/latest',
+      https.get('https://api.github.com/repos/Hosamaction/h-karate/releases/latest',
         { headers: { 'User-Agent': 'H-Karate-App' } },
         (res) => {
           let body = '';

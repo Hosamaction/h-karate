@@ -10,7 +10,7 @@
  *  6. Anti-tamper                     — license file stored encrypted at rest
  */
 
-const { createVerify, createHash, createCipheriv, createDecipheriv, randomBytes } = require('crypto');
+const crypto = require('crypto');
 const fs   = require('fs');
 const path = require('path');
 const os   = require('os');
@@ -28,13 +28,13 @@ const LICENSE_SERVER = 'https://hkarate-license-server-production.up.railway.app
 // ── Encryption key for local license storage ──────────────────────────────────
 // Derived from machine ID so the encrypted file is useless on another machine
 function getStorageKey(machineId) {
-  return createHash('sha256').update('hkarate-v06-' + machineId).digest();
+  return crypto.createHash('sha256').update('hkarate-v06-' + machineId).digest();
 }
 
 function encryptLicense(obj, machineId) {
   const key = getStorageKey(machineId);
-  const iv  = randomBytes(16);
-  const cipher = createCipheriv('aes-256-cbc', key, iv);
+  const iv  = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
   const data = Buffer.from(JSON.stringify(obj), 'utf8');
   const enc  = Buffer.concat([cipher.update(data), cipher.final()]);
   return iv.toString('hex') + ':' + enc.toString('hex');
@@ -46,7 +46,7 @@ function decryptLicense(str, machineId) {
     const key     = getStorageKey(machineId);
     const iv      = Buffer.from(ivHex, 'hex');
     const enc     = Buffer.from(encHex, 'hex');
-    const decipher = createDecipheriv('aes-256-cbc', key, iv);
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
     const dec = Buffer.concat([decipher.update(enc), decipher.final()]);
     return JSON.parse(dec.toString('utf8'));
   } catch(_) { return null; }
@@ -70,16 +70,15 @@ function getMachineId() {
       .sort()
       .join(',')
   ];
-  return createHash('sha256').update(parts.join('|')).digest('hex');
+  return crypto.createHash('sha256').update(parts.join('|')).digest('hex');
 }
 
 // ── Signature verification ────────────────────────────────────────────────────
 function verifySignature(payload, signature) {
   try {
-    const verify = createVerify('SHA512');
-    verify.update(payload);
-    verify.end();
-    return verify.verify(PUBLIC_KEY, signature, 'base64');
+    // Ed25519 direct verification
+    const publicKeyObject = crypto.createPublicKey(PUBLIC_KEY);
+    return crypto.verify(null, Buffer.from(payload), publicKeyObject, Buffer.from(signature, 'base64'));
   } catch(_) { return false; }
 }
 
