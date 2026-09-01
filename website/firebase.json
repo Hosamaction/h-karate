@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "target": "main",
+    "site": "hkarate-app",
     "public": "public",
     "ignore": [
       "firebase.json",
