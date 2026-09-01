@@ -14,7 +14,17 @@ const path = require('path');
 
 let _keys = null;
 function keys() {
-  if (!_keys) _keys = JSON.parse(fs.readFileSync(path.join(__dirname, 'keys.json'), 'utf8'));
+  if (!_keys) {
+    // Use environment variables if available, otherwise fall back to keys.json file
+    if (process.env.PRIVATE_KEY && process.env.PUBLIC_KEY) {
+      _keys = {
+        privateKey: process.env.PRIVATE_KEY,
+        publicKey: process.env.PUBLIC_KEY
+      };
+    } else {
+      _keys = JSON.parse(fs.readFileSync(path.join(__dirname, 'keys.json'), 'utf8'));
+    }
+  }
   return _keys;
 }
 
