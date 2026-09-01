@@ -8,7 +8,7 @@
  *   signature: base64(Ed25519Sign(payload))
  * }
  */
-const { createSign, createVerify } = require('crypto');
+const crypto = require('crypto');
 const fs   = require('fs');
 const path = require('path');
 
@@ -43,10 +43,14 @@ function issueLicense({ email, plan, machineId = '', daysValid, licenseId }) {
   const payloadObj = { email, plan, issuedAt: now, expiresAt, machineId, licenseId, v: 1 };
   const payloadB64 = Buffer.from(JSON.stringify(payloadObj)).toString('base64');
 
-  const sign = createSign('SHA512');
-  sign.update(payloadB64);
-  sign.end();
-  const signature = sign.sign(keys().privateKey, 'base64');
+  // Use crypto.sign() directly for Ed25519 keys
+  const privateKeyObject = crypto.createPrivateKey({
+    key: keys().privateKey,
+    format: 'pem',
+    type: 'pkcs8'
+  });
+  
+  const signature = crypto.sign(null, Buffer.from(payloadB64), privateKeyObject).toString('base64');
 
   return { payload: payloadB64, signature };
 }
@@ -56,10 +60,14 @@ function issueLicense({ email, plan, machineId = '', daysValid, licenseId }) {
  */
 function verifyLicense({ payload, signature }) {
   try {
-    const verify = createVerify('SHA512');
-    verify.update(payload);
-    verify.end();
-    const ok = verify.verify(keys().publicKey, signature, 'base64');
+    // Use crypto.verify() directly for Ed25519 keys
+    const publicKeyObject = crypto.createPublicKey({
+      key: keys().publicKey,
+      format: 'pem',
+      type: 'spki'
+    });
+    
+    const ok = crypto.verify(null, Buffer.from(payload), publicKeyObject, Buffer.from(signature, 'base64'));
     if (!ok) return { valid: false, reason: 'invalid_signature' };
 
     const data = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'));
