@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H Karate — History</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    .filters { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .filters input, .filters select { max-width: 200px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; text-align: center; }
+    .stat-val  { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 900; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .stat-lbl  { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .disc-badge { padding: 2px 8px; border-radius: var(--radius-full); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .disc-kumite  { background: var(--red-dim);    color: var(--red); }
+    .disc-kata    { background: var(--blue-dim);   color: var(--blue); }
+    .disc-kata-allin { background: var(--gold-dim); color: var(--gold); }
+    .winner-cell { font-weight: 700; }
+    .winner-red  { color: var(--red); }
+    .winner-blue { color: var(--blue); }
+    .winner-gold { color: var(--gold); }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-state .icon { font-size: 4rem; margin-bottom: 16px; }
+    .action-row { display: flex; gap: 8px; }
+    .print-btn { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="logo" href="home.html">🥋 H <span>KARATE</span></a>
+      <nav class="header-nav">
+        <a href="home.html" data-i18n="nav_home">Home</a>
+        <a href="kumite.html" data-i18n="nav_kumite">Kumite</a>
+        <a href="kata.html" data-i18n="nav_kata">Kata 1v1</a>
+        <a href="kata-allin.html" data-i18n="nav_kataAllin">Kata All-In</a>
+        <a href="bracket.html" data-i18n="nav_bracket">Bracket</a>
+        <a href="history.html" class="active" data-i18n="nav_history">History</a>
+        <a href="settings.html" data-i18n="nav_settings">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="exportJSON()" data-i18n="btn_exportJSON">⬇ JSON</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()" data-i18n="btn_exportCSV">⬇ CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="window.location.href='home.html'" data-i18n="btn_back">← Back</button>
+      </div>
+    </header>
+
+    <main class="page-content wide">
+      <div class="flex-between mb-24">
+        <div><h2 data-i18n="history_title">📋 Match History</h2><p class="text-sm text-muted" data-i18n="history_subtitle">All recorded competition results</p></div>
+        <button class="btn btn-danger btn-sm" onclick="clearAll()" data-i18n="history_clearAll">🗑 Clear All</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl" data-i18n="history_totalMatches">Total Matches</div></div>
+        <div class="stat-card"><div class="stat-val" id="statKumite">0</div><div class="stat-lbl" data-i18n="history_kumite">Kumite</div></div>
+        <div class="stat-card"><div class="stat-val" id="statKata">0</div><div class="stat-lbl" data-i18n="history_kata">Kata 1v1</div></div>
+        <div class="stat-card"><div class="stat-val" id="statAllin">0</div><div class="stat-lbl" data-i18n="history_tournaments">Tournaments</div></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <input type="text" id="filterSearch" placeholder="Search name, club..." data-i18n-attr="placeholder" data-i18n="history_searchPlaceholder" oninput="applyFilters()" style="max-width:220px">
+        <select id="filterDisc" onchange="applyFilters()">
+          <option value="" data-i18n="history_allDisciplines">All Disciplines</option>
+          <option value="kumite" data-i18n="history_kumite">Kumite</option>
+          <option value="kata" data-i18n="history_kata">Kata 1v1</option>
+          <option value="kata-allin" data-i18n="history_tournaments">Kata All-In</option>
+        </select>
+        <select id="filterRound" onchange="applyFilters()">
+          <option value="" data-i18n="history_allRounds">All Rounds</option>
+          <option>Preliminary</option>
+          <option>Quarter Final</option>
+          <option>Semi Final</option>
+          <option>Final</option>
+          <option>Grand Final</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="clearFilters()" data-i18n="history_clearFilters">✕ Clear</button>
+        <span class="text-sm text-muted" id="filterCount"></span>
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <div class="table-wrap">
+          <table id="historyTable">
+            <thead>
+              <tr>
+                <th data-i18n="history_colNum">#</th>
+                <th data-i18n="history_colDisc">Discipline</th>
+                <th data-i18n="history_colCategory">Category</th>
+                <th data-i18n="history_colRound">Round</th>
+                <th data-i18n="history_colRed">Red / Competitor A</th>
+                <th data-i18n="history_colBlue">Blue / Competitor B</th>
+                <th data-i18n="history_colScore">Score</th>
+                <th data-i18n="history_colWinner">Winner</th>
+                <th data-i18n="history_colMethod">Method</th>
+                <th data-i18n="history_colDate">Date</th>
+                <th data-i18n="history_colActions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state hidden" id="emptyState">
+          <div class="icon">📭</div>
+          <div data-i18n="history_noRecords">No match records found</div>
+          <div class="text-sm mt-8" data-i18n="history_autoSaved">Matches are saved automatically when you end a competition</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script>
+    let allRows = [];
+
+    async function load() {
+      allRows = await window.api.invoke('history:get', 500) || [];
+      updateStats();
+      applyFilters();
+    }
+
+    function updateStats() {
+      Utils.setText('statTotal',  allRows.length);
+      Utils.setText('statKumite', allRows.filter(r => r.discipline === 'kumite').length);
+      Utils.setText('statKata',   allRows.filter(r => r.discipline === 'kata').length);
+      Utils.setText('statAllin',  allRows.filter(r => r.discipline === 'kata-allin').length);
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('filterSearch')?.value.toLowerCase() || '';
+      const disc   = document.getElementById('filterDisc')?.value || '';
+      const round  = document.getElementById('filterRound')?.value || '';
+
+      const filtered = allRows.filter(r => {
+        if (disc  && r.discipline !== disc)  return false;
+        if (round && r.round !== round)       return false;
+        if (search) {
+          const hay = [r.red_name, r.blue_name, r.red_club, r.blue_club, r.category].join(' ').toLowerCase();
+          if (!hay.includes(search)) return false;
+        }
+        return true;
+      });
+
+      Utils.setText('filterCount', `${filtered.length} result${filtered.length !== 1 ? 's' : ''}`);
+      renderTable(filtered);
+    }
+
+    function renderTable(rows) {
+      const tbody = document.getElementById('historyBody');
+      const empty = document.getElementById('emptyState');
+      tbody.innerHTML = '';
+
+      if (!rows.length) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+
+        const discClass = { kumite:'disc-kumite', kata:'disc-kata', 'kata-allin':'disc-kata-allin' }[r.discipline] || '';
+        const winnerClass = r.winner === 'red' ? 'winner-red' : r.winner === 'blue' ? 'winner-blue' : 'winner-gold';
+        const winnerName = r.winner === 'red' ? r.red_name : r.winner === 'blue' ? r.blue_name : r.winner || '—';
+        const score = r.red_score && r.blue_score ? `${r.red_score} — ${r.blue_score}` : '—';
+
+        const cells = [
+          r.id,
+          `<span class="disc-badge ${discClass}">${r.discipline || '—'}</span>`,
+          r.category || '—',
+          r.round    || '—',
+          `<strong>${r.red_name || '—'}</strong><br><small class="text-muted">${r.red_club || ''}</small>`,
+          `<strong>${r.blue_name || '—'}</strong><br><small class="text-muted">${r.blue_club || ''}</small>`,
+          score,
+          `<span class="winner-cell ${winnerClass}">${winnerName}</span>`,
+          r.method   || '—',
+          Utils.formatDate(r.date),
+          `<div class="action-row"><button class="btn btn-ghost btn-sm print-btn" onclick="printMatch(${r.id})">🖨</button></div>`
+        ];
+
+        cells.forEach((c, i) => {
+          const td = document.createElement('td');
+          if (i === 1 || i === 4 || i === 5 || i === 7 || i === 10) td.innerHTML = c;
+          else td.textContent = typeof c === 'number' ? c : (c || '—');
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function clearFilters() {
+      Utils.setVal('filterSearch', '');
+      Utils.setVal('filterDisc', '');
+      Utils.setVal('filterRound', '');
+      applyFilters();
+    }
+
+    async function clearAll() {
+      if (!confirm('Delete ALL match history? This cannot be undone.')) return;
+      window.api.send('history:clear');
+      allRows = [];
+      updateStats();
+      applyFilters();
+      Toast.warning('Cleared', 'All match history deleted');
+    }
+
+    async function exportJSON() {
+      const ok = await window.api.invoke('export:history-json');
+      if (ok) Toast.success('Exported', 'History saved as JSON');
+    }
+
+    async function exportCSV() {
+      const ok = await window.api.invoke('export:history-csv');
+      if (ok) Toast.success('Exported', 'History saved as CSV');
+    }
+
+    function printMatch(id) {
+      const r = allRows.find(x => x.id === id);
+      if (!r) return;
+      let data = {};
+      try { data = JSON.parse(r.data || '{}'); } catch(e) {}
+
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+      <title>Match Result — H Karate</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 40px; color: #000; }
+        h1 { font-size: 28px; margin-bottom: 4px; }
+        .sub { color: #666; margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 700; }
+        .winner { color: #16a34a; font-weight: 700; font-size: 1.2em; }
+        .footer { margin-top: 32px; font-size: 12px; color: #999; }
+      </style></head><body>
+      <h1>🥋 H Karate — Match Result</h1>
+      <div class="sub">${r.category || ''} ${r.round ? '· ' + r.round : ''} · ${Utils.formatDate(r.date)}</div>
+      <table>
+        <tr><th>Discipline</th><td>${r.discipline}</td><th>Method</th><td>${r.method || '—'}</td></tr>
+        <tr><th>Red Corner</th><td>${r.red_name} (${r.red_club || '—'})</td><th>Score</th><td>${r.red_score || '—'}</td></tr>
+        <tr><th>Blue Corner</th><td>${r.blue_name} (${r.blue_club || '—'})</td><th>Score</th><td>${r.blue_score || '—'}</td></tr>
+      </table>
+      <p class="winner" style="margin-top:20px">🏆 Winner: ${r.winner === 'red' ? r.red_name : r.winner === 'blue' ? r.blue_name : r.winner || 'Draw'}</p>
+      <div class="footer">Printed by H Karate Scoring System v3 · ${new Date().toLocaleString()}</div>
+      </body></html>`;
+
+      window.api.send('print:results', html);
+    }
+
+    load();
+    I18N.init();
+  </script>
+</body>
+</html>

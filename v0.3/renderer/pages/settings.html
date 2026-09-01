@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H Karate — Settings</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    .settings-grid { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: start; }
+    .settings-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 80px; }
+    .snav-btn { padding: 10px 16px; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); cursor: pointer; border: none; background: transparent; text-align: left; transition: var(--transition); }
+    .snav-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-white); }
+    .snav-btn.active { background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+    .settings-section { display: none; }
+    .settings-section.active { display: block; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 24px; }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-info { flex: 1; }
+    .setting-label { font-weight: 600; font-size: 0.9rem; color: var(--text-white); margin-bottom: 3px; }
+    .setting-desc  { font-size: 0.8rem; color: var(--text-muted); }
+    .setting-control { flex-shrink: 0; min-width: 180px; }
+    .setting-control input[type="text"],
+    .setting-control input[type="number"],
+    .setting-control select { width: 100%; }
+    .setting-control input[type="range"] { width: 140px; accent-color: var(--accent); }
+    .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+    .toggle { position: relative; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: var(--transition); }
+    .toggle-slider::before { content:''; position: absolute; width: 18px; height: 18px; left: 2px; top: 2px; background: var(--text-muted); border-radius: 50%; transition: var(--transition); }
+    .toggle input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: #fff; }
+    .vol-val { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent); min-width: 36px; text-align: right; }
+    .danger-zone { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-lg); padding: 20px; margin-top: 16px; }
+    .danger-zone h4 { color: var(--red); margin-bottom: 12px; }
+    .save-bar { position: sticky; bottom: 0; background: rgba(17,20,32,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; margin: 0 -32px; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="logo" href="home.html">🥋 H <span>KARATE</span></a>
+      <nav class="header-nav">
+        <a href="home.html" data-i18n="nav_home">Home</a>
+        <a href="kumite.html" data-i18n="nav_kumite">Kumite</a>
+        <a href="kata.html" data-i18n="nav_kata">Kata 1v1</a>
+        <a href="kata-allin.html" data-i18n="nav_kataAllin">Kata All-In</a>
+        <a href="bracket.html" data-i18n="nav_bracket">Bracket</a>
+        <a href="history.html" data-i18n="nav_history">History</a>
+        <a href="settings.html" class="active" data-i18n="nav_settings">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="window.location.href='home.html'" data-i18n="btn_back">← Back</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="flex-between mb-24">
+        <div><h2 data-i18n="settings_title">⚙️ Settings</h2><p class="text-sm text-muted" data-i18n="settings_subtitle">Configure H Karate to your preferences</p></div>
+      </div>
+
+      <div class="settings-grid">
+        <!-- Nav -->
+        <div class="settings-nav">
+          <button class="snav-btn active" onclick="showSection('general')" data-i18n="settings_general">🏠 General</button>
+          <button class="snav-btn" onclick="showSection('sound')" data-i18n="settings_sound">🔊 Sound</button>
+          <button class="snav-btn" onclick="showSection('display')" data-i18n="settings_display">📺 Display</button>
+          <button class="snav-btn" onclick="showSection('competition')" data-i18n="settings_competition">🥋 Competition</button>
+          <button class="snav-btn" onclick="showSection('data')" data-i18n="settings_data">🗄️ Data</button>
+        </div>
+
+        <!-- Sections -->
+        <div>
+          <!-- General -->
+          <div class="card settings-section active" id="sec-general">
+            <div class="card-header"><h3>General</h3></div>
+            <div class="card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_orgName">Organization Name</div>
+                  <div class="setting-desc" data-i18n="settings_orgNameDesc">Shown on splash screen and print headers</div>
+                </div>
+                <div class="setting-control">
+                  <input type="text" id="s-organizationName" placeholder="H Karate">
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_language">Language</div>
+                  <div class="setting-desc" data-i18n="settings_langDesc">Interface language</div>
+                </div>
+                <div class="setting-control">
+                  <select id="langSelector" onchange="I18N.setLang(this.value)">
+                    <option value="en">English</option>
+                    <option value="ar">العربية (Arabic)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sound -->
+          <div class="card settings-section" id="sec-sound">
+            <div class="card-header"><h3>Sound Effects</h3></div>
+            <div class="card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_soundEnable">Enable Sound Effects</div>
+                  <div class="setting-desc" data-i18n="settings_soundDesc">Beeps and gongs for scores, match start/end, penalties</div>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle"><input type="checkbox" id="s-soundEnabled" onchange="updateSoundPreview()"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_volume">Volume</div>
+                  <div class="setting-desc" data-i18n="settings_volumeDesc">Master volume for all sound effects</div>
+                </div>
+                <div class="setting-control toggle-wrap">
+                  <input type="range" id="s-soundVolume" min="0" max="1" step="0.05" oninput="updateVolLabel()">
+                  <span class="vol-val" id="volLabel">80%</span>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_testSounds">Test Sounds</div>
+                  <div class="setting-desc" data-i18n="settings_testDesc">Preview each sound effect</div>
+                </div>
+                <div class="setting-control" style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="btn btn-ghost btn-sm" onclick="Sound.matchStart()" data-i18n="settings_testMatchStart">Match Start</button>
+                  <button class="btn btn-ghost btn-sm" onclick="Sound.score()" data-i18n="settings_testScore">Score</button>
+                  <button class="btn btn-ghost btn-sm" onclick="Sound.gong()" data-i18n="settings_testGong">Gong</button>
+                  <button class="btn btn-ghost btn-sm" onclick="Sound.matchEnd()" data-i18n="settings_testMatchEnd">Match End</button>
+                  <button class="btn btn-ghost btn-sm" onclick="Sound.winner()" data-i18n="settings_testWinner">Winner</button>
+                  <button class="btn btn-ghost btn-sm" onclick="Sound.penalty()" data-i18n="settings_testPenalty">Penalty</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Display -->
+          <div class="card settings-section" id="sec-display">
+            <div class="card-header"><h3 data-i18n="settings_display">Display / Scoreboard</h3></div>
+            <div class="card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_fullscreen">Fullscreen Scoreboard</div>
+                  <div class="setting-desc" data-i18n="settings_fullscreenDesc">Open display window in fullscreen mode</div>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle"><input type="checkbox" id="s-displayFullscreen"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Competition -->
+          <div class="card settings-section" id="sec-competition">
+            <div class="card-header"><h3 data-i18n="settings_competition">Competition Defaults</h3></div>
+            <div class="card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_timerDuration">Default Timer Duration</div>
+                  <div class="setting-desc" data-i18n="settings_timerDesc">Default kumite match duration in seconds</div>
+                </div>
+                <div class="setting-control">
+                  <select id="s-timerDuration">
+                    <option value="120" data-i18n="settings_timer2min">2:00 — Junior</option>
+                    <option value="180" data-i18n="settings_timer3min">3:00 — Standard</option>
+                    <option value="240" data-i18n="settings_timer4min">4:00 — Extended</option>
+                    <option value="300" data-i18n="settings_timer5min">5:00 — Final</option>
+                  </select>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_judgeCount">Default Judge Count</div>
+                  <div class="setting-desc" data-i18n="settings_judgeDesc">Default number of judges for kata competitions</div>
+                </div>
+                <div class="setting-control">
+                  <select id="s-judgeCount">
+                    <option value="1" data-i18n="settings_judge1">1 Judge</option>
+                    <option value="3" data-i18n="settings_judge3">3 Judges</option>
+                    <option value="5" data-i18n="settings_judge5">5 Judges</option>
+                    <option value="7" data-i18n="settings_judge7">7 Judges</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Data -->
+          <div class="card settings-section" id="sec-data">
+            <div class="card-header"><h3 data-i18n="settings_data">Data Management</h3></div>
+            <div class="card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-label" data-i18n="settings_exportTitle">Export Match History</div>
+                  <div class="setting-desc" data-i18n="settings_exportDesc">Download all match records as JSON or CSV</div>
+                </div>
+                <div class="setting-control" style="display:flex;gap:8px">
+                  <button class="btn btn-ghost btn-sm" onclick="exportJSON()" data-i18n="btn_exportJSON">Export JSON</button>
+                  <button class="btn btn-ghost btn-sm" onclick="exportCSV()" data-i18n="btn_exportCSV">Export CSV</button>
+                </div>
+              </div>
+              <div class="danger-zone">
+                <h4 data-i18n="settings_dangerZone">⚠️ Danger Zone</h4>
+                <div class="setting-row" style="border:none;padding-top:0">
+                  <div class="setting-info">
+                    <div class="setting-label" data-i18n="settings_clearTitle">Clear All Match History</div>
+                    <div class="setting-desc" data-i18n="settings_clearDesc">Permanently delete all saved match records</div>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn btn-danger btn-sm" onclick="clearHistory()" data-i18n="settings_clearBtn">Clear History</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Save bar -->
+          <div class="save-bar">
+            <span class="text-sm text-muted" id="saveStatus" data-i18n="settings_saveStatus">Changes saved automatically</span>
+            <button class="btn btn-primary" onclick="saveAll()" data-i18n="settings_saveBtn">💾 Save Settings</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/sound.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script>
+    let settings = {};
+
+    function showSection(id) {
+      document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('sec-' + id)?.classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    function updateVolLabel() {
+      const v = document.getElementById('s-soundVolume')?.value || 0.8;
+      document.getElementById('volLabel').textContent = Math.round(v * 100) + '%';
+      Sound.setVolume(v);
+    }
+
+    function updateSoundPreview() {
+      const en = document.getElementById('s-soundEnabled')?.checked;
+      Sound.setEnabled(en);
+    }
+
+    async function loadSettings() {
+      settings = await window.api.invoke('settings:get-all') || {};
+      const set = (id, val) => { const el = document.getElementById(id); if (!el) return; if (el.type === 'checkbox') el.checked = val === 'true' || val === true; else el.value = val ?? ''; };
+      set('s-organizationName', settings.organizationName);
+      set('s-soundEnabled',     settings.soundEnabled);
+      set('s-soundVolume',      settings.soundVolume);
+      set('s-displayFullscreen',settings.displayFullscreen);
+      set('s-timerDuration',    settings.timerDuration);
+      set('s-judgeCount',       settings.judgeCount);
+      updateVolLabel();
+      Sound.setEnabled(settings.soundEnabled !== 'false');
+      Sound.setVolume(settings.soundVolume || 0.8);
+      
+      // Sync language selector
+      const lang = await window.api.invoke('settings:get', 'language') || 'en';
+      const sel = document.getElementById('langSelector');
+      if (sel) sel.value = lang;
+    }
+
+    function saveAll() {
+      const get = (id) => { const el = document.getElementById(id); if (!el) return null; return el.type === 'checkbox' ? String(el.checked) : el.value; };
+      const obj = {
+        organizationName:  get('s-organizationName'),
+        soundEnabled:      get('s-soundEnabled'),
+        soundVolume:       get('s-soundVolume'),
+        displayFullscreen: get('s-displayFullscreen'),
+        timerDuration:     get('s-timerDuration'),
+        judgeCount:        get('s-judgeCount'),
+      };
+      window.api.send('settings:set-all', obj);
+      Sound.setEnabled(obj.soundEnabled === 'true');
+      Sound.setVolume(obj.soundVolume);
+      document.getElementById('saveStatus').textContent = '✅ Saved at ' + new Date().toLocaleTimeString();
+      Toast.success('Settings Saved', 'All preferences have been saved');
+    }
+
+    async function exportJSON() {
+      const ok = await window.api.invoke('export:history-json');
+      if (ok) Toast.success('Exported', 'History saved as JSON');
+    }
+
+    async function exportCSV() {
+      const ok = await window.api.invoke('export:history-csv');
+      if (ok) Toast.success('Exported', 'History saved as CSV');
+    }
+
+    function clearHistory() {
+      if (!confirm('Delete ALL match history? This cannot be undone.')) return;
+      window.api.send('history:clear');
+      Toast.warning('Cleared', 'All match history deleted');
+    }
+
+    loadSettings();
+    I18N.init();
+  </script>
+</body>
+</html>

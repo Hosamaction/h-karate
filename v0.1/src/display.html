@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karate Scoring Display</title>
+    <link href="../public/css/style.css" rel="stylesheet">
+    <link href="../public/css/modern-ui.css" rel="stylesheet">
+</head>
+<body class="display-screen" style="background: linear-gradient(135deg, #0f0f23, #1a1a2e);">
+    <div class="display-header">
+        <h1>カラテ (KARATE) トーナメント (TOURNAMENT)</h1>
+        <div class="match-info">
+            <span id="matchCategory">Category</span>
+            <span id="matchRound">Round</span>
+        </div>
+    </div>
+
+    <!-- Kumite Display -->
+    <div id="kumiteDisplay" class="kumite-display">
+        <div class="timer-section">
+            <div class="timer-display timer-modern" id="displayTimer">3:00</div>
+            <div class="timer-status" id="timerStatus">READY</div>
+        </div>
+        
+        <div class="competitors-section">
+            <div class="competitor competitor-modern red-corner">
+                <div class="corner-label">RED</div>
+                <div class="competitor-info">
+                    <h2 id="redDisplayName">COMPETITOR 1</h2>
+                    <p id="redDisplayClub">CLUB</p>
+                </div>
+                <div class="score-display">
+                    <div class="main-score score-modern" id="redDisplayScore">0</div>
+                    <div class="penalties-display">Penalties: <span id="redDisplayPenalties">0</span></div>
+                </div>
+            </div>
+            
+            <div class="vs-section">
+                <div class="vs-text">VS</div>
+            </div>
+            
+            <div class="competitor competitor-modern blue-corner">
+                <div class="corner-label">BLUE</div>
+                <div class="competitor-info">
+                    <h2 id="blueDisplayName">COMPETITOR 2</h2>
+                    <p id="blueDisplayClub">CLUB</p>
+                </div>
+                <div class="score-display">
+                    <div class="main-score score-modern" id="blueDisplayScore">0</div>
+                    <div class="penalties-display">Penalties: <span id="blueDisplayPenalties">0</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="match-status">
+            <div class="status-text" id="matchStatus">READY</div>
+        </div>
+    </div>
+
+    <!-- Kata Display -->
+    <div id="kataDisplay" class="kata-display" style="display: none;">
+        <div class="kata-header">
+            <h2>KATA COMPETITION</h2>
+            <div class="current-performer">
+                <span id="currentPerformerDisplay">Current Performer</span>
+            </div>
+        </div>
+        
+        <div class="kata-scores-section">
+            <div class="competitor-kata competitor-modern red-corner">
+                <div class="corner-label">RED</div>
+                <div class="competitor-info">
+                    <h2 id="redKataDisplayName">COMPETITOR 1</h2>
+                    <p id="redKataDisplayClub">CLUB</p>
+                </div>
+                <div class="kata-score-display">
+                    <div class="final-score score-modern" id="redFinalScore">0.00</div>
+                    <div class="score-breakdown">
+                        <span>Technical: <span id="redTechnical">0.00</span></span>
+                        <span>Athletic: <span id="redAthletic">0.00</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="vs-section">
+                <div class="vs-text">VS</div>
+            </div>
+            
+            <div class="competitor-kata competitor-modern blue-corner">
+                <div class="corner-label">BLUE</div>
+                <div class="competitor-info">
+                    <h2 id="blueKataDisplayName">COMPETITOR 2</h2>
+                    <p id="blueKataDisplayClub">CLUB</p>
+                </div>
+                <div class="kata-score-display">
+                    <div class="final-score score-modern" id="blueFinalScore">0.00</div>
+                    <div class="score-breakdown">
+                        <span>Technical: <span id="blueTechnical">0.00</span></span>
+                        <span>Athletic: <span id="blueAthletic">0.00</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="judge-scores">
+            <h3>JUDGE SCORES</h3>
+            <div class="scores-grid" id="judgeScoresGrid">
+                <!-- Judge scores will be populated here -->
+            </div>
+        </div>
+        
+        <div class="kata-status">
+            <div class="status-text" id="kataStatus">READY</div>
+        </div>
+    </div>
+
+    <!-- Kata All-In Display -->
+    <div id="kataAllInDisplay" class="kata-allin-display" style="display: none;">
+        <div class="tournament-header">
+            <h2 id="tournamentName">KATA TOURNAMENT</h2>
+            <div class="round-info">
+                <span id="currentRound">ROUND 1</span>
+            </div>
+        </div>
+        
+        <div class="current-performer-section">
+            <div class="performer-card card-glass">
+                <h3>CURRENT PERFORMER</h3>
+                <div class="performer-info">
+                    <h2 id="currentPerformerName">WAITING...</h2>
+                    <p id="currentPerformerClub">CLUB</p>
+                    <div class="performer-score score-modern" id="currentPerformerScore">0.00</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="competitors-list-section">
+            <h3>COMPETITORS</h3>
+            <div class="competitors-grid" id="competitorsListGrid">
+                <!-- Competitors will be populated here -->
+            </div>
+        </div>
+        
+        <div class="tournament-status">
+            <div class="status-text" id="tournamentStatus">WAITING FOR SCORES</div>
+        </div>
+    </div>
+
+    <!-- Winner Display -->
+    <div id="winnerDisplay" class="winner-display" style="display: none;">
+        <div class="winner-announcement">
+            <h1>WINNER</h1>
+            <div class="winner-info">
+                <h2 id="winnerName">COMPETITOR NAME</h2>
+                <p id="winnerClub">CLUB NAME</p>
+                <div class="winner-corner" id="winnerCorner">RED CORNER</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="display.js"></script>
+    
+    <style>
+        .kata-allin-display {
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .tournament-header h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .round-info {
+            font-size: 24px;
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+        
+        .current-performer-section {
+            margin-bottom: 60px;
+        }
+        
+        .performer-card {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .performer-info h2 {
+            font-size: 36px;
+            margin: 20px 0;
+        }
+        
+        .performer-info p {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        
+        .performer-score {
+            font-size: 72px !important;
+        }
+        
+        .competitors-list-section h3 {
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        
+        .competitors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .competitor-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .competitor-item.active {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+        
+        .competitor-item .rank {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--neon-blue);
+        }
+        
+        .competitor-item .name {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        .competitor-item .score {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .kata-allin-display {
+            background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
+            color: var(--white);
+            padding: 2vh 2vw;
+            min-height: 100vh;
+        }
+        
+        .performer-card {
+            background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
+            border: 1px solid var(--gray-600);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .competitor-item {
+            background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
+            border: 1px solid var(--gray-600);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            color: var(--white);
+        }
+        
+        .competitor-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+        
+        .competitor-item.active {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(56, 161, 105, 0.4);
+        }
+        
+        .tournament-header h2 {
+            font-size: clamp(32px, 5vw, 48px);
+            color: var(--white);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .current-performer-section h3,
+        .competitors-list-section h3 {
+            color: var(--white);
+            font-size: clamp(24px, 3vw, 32px);
+        }
+        
+        .performer-score {
+            color: var(--success) !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tournament-status {
+            margin-top: 40px;
+        }
+        
+        .penalties-display {
+            font-size: clamp(14px, 2vw, 18px);
+            margin-top: 1vh;
+            opacity: 0.9;
+        }
+    </style>
+    <script src="notifications.js"></script>
+</body>
+</html>

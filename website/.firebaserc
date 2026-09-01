@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "hkarate-app"
+  },
+  "targets": {
+    "hkarate-app": {
+      "hosting": {
+        "main": [
+          "hkarate-app"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

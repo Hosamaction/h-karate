@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kata Scoring</title>
+    <link href="../public/css/professional-design.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-header">
+        <div class="row">
+            <div class="col">
+                <h1>🥋 形 (Kata) Scoring</h1>
+            </div>
+            <div class="col text-right">
+                <div class="controls">
+                    <button class="btn-pro btn-primary" onclick="openDisplay()">📺 Display</button>
+                    <button class="btn-pro btn-success" id="judgeBtn" onclick="toggleWebJudge()">👨⚖️ Start Judge Server</button>
+                    <button class="btn-pro" onclick="goBack()">← Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content fade-in">
+        <div class="card">
+            <div class="card-header">
+                <h3>形 (Kata) - Form Competition Setup</h3>
+            </div>
+            <div class="card-body">
+            <div class="competitors">
+                <div class="competitor">
+                    <label>赤 (Red) コーナー (Corner):</label>
+                    <input type="text" id="redName" class="form-control" placeholder="Competitor Name">
+                    <input type="text" id="redClub" class="form-control" placeholder="Club/Team">
+                    <input type="text" id="redKata" class="form-control" placeholder="Kata Name">
+                </div>
+                <div class="competitor">
+                    <label>青 (Blue) コーナー (Corner):</label>
+                    <input type="text" id="blueName" class="form-control" placeholder="Competitor Name">
+                    <input type="text" id="blueClub" class="form-control" placeholder="Club/Team">
+                    <input type="text" id="blueKata" class="form-control" placeholder="Kata Name">
+                </div>
+            </div>
+            
+            <div class="kata-settings">
+                <div class="form-group">
+                    <label>Number of Judges:</label>
+                    <select id="judgeCount" class="form-control" onchange="setupJudges()">
+                        <option value="1">1 Judge</option>
+                        <option value="3">3 Judges</option>
+                        <option value="5">5 Judges</option>
+                        <option value="7">7 Judges</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <input type="text" id="category" class="form-control" placeholder="e.g., Senior Female Kata">
+                </div>
+                <div class="form-group">
+                    <label>Round:</label>
+                    <select id="round" class="form-control">
+                        <option value="elimination">Elimination</option>
+                        <option value="semi-final">Semi Final</option>
+                        <option value="final">Final</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="match-controls">
+                <div class="text-center mt-4">
+                    <button class="btn-pro btn-success btn-lg" onclick="startKataMatch()">スタート (Start) Match</button>
+                    <button class="btn-pro btn-danger" onclick="resetMatch()">リセット (Reset)</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div id="kataScoring" class="card" style="display: none; margin-top: 30px;">
+            <div class="card-body">
+            <div class="performance-control">
+                <h2>Performance Control</h2>
+                <div class="current-performer">
+                    <label>Current Performer:</label>
+                    <select id="currentPerformer" class="form-control" onchange="setCurrentPerformer()">
+                        <option value="red">Red Corner</option>
+                        <option value="blue">Blue Corner</option>
+                    </select>
+                    <button class="btn-pro btn-success" onclick="startPerformance()">▶️ Start Performance</button>
+                    <button class="btn-pro btn-primary" onclick="endPerformance()">⏹️ End Performance</button>
+                </div>
+            </div>
+            
+            <div class="judge-status">
+                <h3>Judge Status</h3>
+                <div id="judgeStatusGrid" class="judge-grid">
+                    <!-- Judge status will be populated here -->
+                </div>
+            </div>
+            
+            <div class="current-scores">
+                <h2>Current Scores</h2>
+                <div class="score-summary">
+                    <div class="competitor-summary red-corner">
+                        <h3 id="redSummaryName">Red Corner</h3>
+                        <div class="kata-info">
+                            <p>Kata: <span id="redKataName">-</span></p>
+                        </div>
+                        <div class="final-score">
+                            <span class="score-label">Final Score:</span>
+                            <span class="score-value" id="redFinalScore">0.00</span>
+                        </div>
+                        <div class="score-breakdown">
+                            <small>Technical: <span id="redTechnical">0.00</span> | Athletic: <span id="redAthletic">0.00</span></small>
+                        </div>
+                    </div>
+                    
+                    <div class="competitor-summary blue-corner">
+                        <h3 id="blueSummaryName">Blue Corner</h3>
+                        <div class="kata-info">
+                            <p>Kata: <span id="blueKataName">-</span></p>
+                        </div>
+                        <div class="final-score">
+                            <span class="score-label">Final Score:</span>
+                            <span class="score-value" id="blueFinalScore">0.00</span>
+                        </div>
+                        <div class="score-breakdown">
+                            <small>Technical: <span id="blueTechnical">0.00</span> | Athletic: <span id="blueAthletic">0.00</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detailed-scores">
+                <h3>Detailed Judge Scores</h3>
+                <div id="detailedScoresTable">
+                    <!-- Detailed scores table will be populated here -->
+                </div>
+            </div>
+            
+            <div class="match-actions">
+                <div class="text-center mt-4">
+                    <button class="btn-pro btn-success" onclick="calculateFinalResults()">📊 Calculate Results</button>
+                    <button class="btn-pro btn-danger" onclick="endKataMatch()">🏁 End Competition</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="kata.js"></script>
+    <script>
+        function openDisplay() {
+            const { ipcRenderer } = require('electron');
+            ipcRenderer.send('open-display-window');
+        }
+        
+        let judgeServerRunning = false;
+        
+        function toggleWebJudge() {
+            const { ipcRenderer, shell } = require('electron');
+            const os = require('os');
+            const btn = document.getElementById('judgeBtn');
+            
+            if (!judgeServerRunning) {
+                ipcRenderer.send('start-web-judge');
+                
+                // Get local IP and open browser
+                const networkInterfaces = os.networkInterfaces();
+                let localIP = 'localhost';
+                Object.keys(networkInterfaces).forEach(key => {
+                    networkInterfaces[key].forEach(addr => {
+                        if (addr.family === 'IPv4' && !addr.internal) {
+                            localIP = addr.address;
+                        }
+                    });
+                });
+                
+                setTimeout(() => {
+                    shell.openExternal(`http://${localIP}:12121/judge`);
+                }, 1000);
+                
+                btn.textContent = '🛑 Stop Judge Server';
+                btn.className = 'btn-pro btn-danger';
+                judgeServerRunning = true;
+            } else {
+                ipcRenderer.send('stop-web-judge');
+                btn.textContent = '👨⚖️ Start Judge Server';
+                btn.className = 'btn-pro btn-success';
+                judgeServerRunning = false;
+            }
+        }
+        
+        function goBack() {
+            const { ipcRenderer } = require('electron');
+            ipcRenderer.send('close-display-window');
+            window.location.href = 'main.html';
+        }
+    </script>
+    <script src="notifications.js"></script>
+</body>
+</html>

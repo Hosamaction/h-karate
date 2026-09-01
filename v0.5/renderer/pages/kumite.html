@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H Karate — Kumite</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    .setup-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: start; }
+    .vs-divider { display: flex; align-items: center; justify-content: center; padding-top: 32px; }
+    .vs-text { font-size: 1.5rem; font-weight: 900; color: var(--text-muted); }
+
+    .scoring-layout { display: grid; grid-template-columns: 1fr 280px 1fr; gap: 20px; }
+
+    .corner-score-panel { border-radius: var(--radius-xl); padding: 28px; text-align: center; }
+    .corner-score-panel.red  { background: linear-gradient(160deg, rgba(239,68,68,0.1), rgba(239,68,68,0.04)); border: 1px solid rgba(239,68,68,0.3); }
+    .corner-score-panel.blue { background: linear-gradient(160deg, rgba(59,130,246,0.1), rgba(59,130,246,0.04)); border: 1px solid rgba(59,130,246,0.3); }
+
+    .corner-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
+    .corner-label.red  { color: var(--red); }
+    .corner-label.blue { color: var(--blue); }
+
+    .corner-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+    .corner-club { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+
+    .main-score { font-family: 'JetBrains Mono', monospace; font-size: 6rem; font-weight: 900; line-height: 1; margin-bottom: 8px; }
+    .main-score.red  { color: var(--red);  text-shadow: 0 0 60px var(--red-glow); }
+    .main-score.blue { color: var(--blue); text-shadow: 0 0 60px var(--blue-glow); }
+
+    .breakdown { display: flex; justify-content: center; gap: 16px; margin-bottom: 20px; font-size: 0.85rem; color: var(--text-secondary); }
+    .breakdown span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .breakdown .val { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-white); }
+
+    .score-btns { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .score-btns .btn { font-size: 0.9rem; }
+
+    .penalty-section { border-top: 1px solid var(--border); padding-top: 16px; }
+    .penalty-section h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px; }
+    .penalty-btns { display: flex; flex-direction: column; gap: 6px; }
+    .penalty-count { margin-top: 10px; font-size: 0.85rem; color: var(--text-secondary); }
+    .penalty-count span { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-white); }
+
+    .center-panel { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+    .timer-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 24px; text-align: center; width: 100%; }
+    .timer-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .timer-val { font-family: 'JetBrains Mono', monospace; font-size: 3.5rem; font-weight: 900; line-height: 1; transition: color 0.5s; }
+    .timer-status { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; }
+
+    .timer-btns { display: flex; gap: 8px; margin-top: 14px; }
+    .timer-btns .btn { flex: 1; }
+
+    .match-info-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 16px; width: 100%; font-size: 0.82rem; }
+    .match-info-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .match-info-row:last-child { border-bottom: none; }
+    .match-info-row .key { color: var(--text-muted); }
+    .match-info-row .val { color: var(--text-primary); font-weight: 600; }
+
+    .end-btns { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+
+    #setupSection  { }
+    #scoringSection { display: none; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="logo" href="home.html">🥋 H <span>KARATE</span></a>
+      <nav class="header-nav">
+        <a href="home.html" data-i18n="nav_home">Home</a>
+        <a href="kumite.html" class="active" data-i18n="nav_kumite">Kumite</a>
+        <a href="kata.html" data-i18n="nav_kata">Kata 1v1</a>
+        <a href="kata-allin.html" data-i18n="nav_kataAllin">Kata All-In</a>
+        <a href="bracket.html" data-i18n="nav_bracket">Bracket</a>
+        <a href="competitors.html" data-i18n="nav_competitors">Competitors</a>
+        <a href="history.html" data-i18n="nav_history">History</a>
+        <a href="settings.html" data-i18n="nav_settings">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openDisplay()" data-i18n="btn_display">📺 Display</button>
+        <button class="btn btn-ghost btn-sm" onclick="go('home.html')" data-i18n="btn_back">← Back</button>
+      </div>
+    </header>
+
+    <main class="page-content wide">
+
+      <!-- SETUP -->
+      <div id="setupSection">
+        <div class="flex-between mb-24">
+          <div>
+            <h2>🥊 Kumite — 組手</h2>
+            <p class="text-sm text-muted">Fighting Competition Setup</p>
+          </div>
+        </div>
+
+        <div class="card mb-24">
+          <div class="card-header"><h3 data-i18n="kumite_matchInfo">Match Information</h3></div>
+          <div class="card-body">
+            <div class="grid grid-2 gap-16 mb-16">
+              <div class="form-group">
+                <label data-i18n="kumite_category">Category</label>
+                <input type="text" id="category" placeholder="e.g. Senior Male −75kg">
+              </div>
+              <div class="form-group">
+                <label data-i18n="kumite_round">Round</label>
+                <select id="round">
+                  <option value="Preliminary">Preliminary</option>
+                  <option value="Quarter Final">Quarter Final</option>
+                  <option value="Semi Final">Semi Final</option>
+                  <option value="Final">Final</option>
+                  <option value="Grand Final">Grand Final</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label data-i18n="kumite_duration">Match Duration (seconds)</label>
+              <select id="matchDuration">
+                <option value="180">3:00 — Standard</option>
+                <option value="120">2:00 — Junior</option>
+                <option value="240">4:00 — Extended</option>
+                <option value="300">5:00 — Final</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-grid mb-24">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="text-red" data-i18n="kumite_redCorner">🔴 Red Corner — 赤</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group mb-16">
+                <label data-i18n="kumite_fighterName">Fighter Name</label>
+                <input type="text" id="redName" placeholder="Full name">
+              </div>
+              <div class="form-group mb-16">
+                <label data-i18n="kumite_club">Club / Team</label>
+                <input type="text" id="redClub" placeholder="Club or country">
+              </div>
+              <div class="form-group">
+                <label data-i18n="kumite_country">Country / Flag (optional)</label>
+                <input type="text" id="redCountry" placeholder="e.g. Japan 🇯🇵">
+              </div>
+            </div>
+          </div>
+
+          <div class="vs-divider"><div class="vs-text">VS</div></div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="text-blue" data-i18n="kumite_blueCorner">🔵 Blue Corner — 青</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group mb-16">
+                <label data-i18n="kumite_fighterName">Fighter Name</label>
+                <input type="text" id="blueName" placeholder="Full name">
+              </div>
+              <div class="form-group mb-16">
+                <label data-i18n="kumite_club">Club / Team</label>
+                <input type="text" id="blueClub" placeholder="Club or country">
+              </div>
+              <div class="form-group">
+                <label data-i18n="kumite_country">Country / Flag (optional)</label>
+                <input type="text" id="blueCountry" placeholder="e.g. France 🇫🇷">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button class="btn btn-primary btn-xl" onclick="startMatch()" data-i18n="kumite_startMatch">▶ Start Kumite Match</button>
+        </div>
+      </div>
+
+      <!-- SCORING -->
+      <div id="scoringSection">
+        <div class="flex-between mb-20">
+          <div>
+            <h2 data-i18n="kumite_liveScoring">🥊 Kumite — Live Scoring</h2>
+            <p class="text-sm text-muted" id="matchInfoLine">—</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="resetMatch()">↺ Reset Match</button>
+        </div>
+
+        <div class="scoring-layout">
+          <!-- RED -->
+          <div class="corner-score-panel red">
+            <div class="corner-label red">Red Corner — 赤</div>
+            <div class="corner-name" id="redDisplayName">—</div>
+            <div class="corner-club" id="redDisplayClub">—</div>
+            <div class="main-score red" id="redScore">0</div>
+            <div class="breakdown">
+              <span><div class="val" id="redYuko">0</div>Yūkō</span>
+              <span><div class="val" id="redWazaari">0</div>Waza-ari</span>
+              <span><div class="val" id="redIppon">0</div>Ippon</span>
+            </div>
+            <div class="score-btns">
+              <button class="btn btn-success" onclick="addScore('red','yuko')">有効 Yūkō &nbsp;+1</button>
+              <button class="btn btn-primary" onclick="addScore('red','wazaari')">技あり Waza-ari &nbsp;+2</button>
+              <button class="btn btn-red"    onclick="addScore('red','ippon')">一本 Ippon &nbsp;+3</button>
+              <button class="btn btn-ghost btn-sm" onclick="undoScore('red')" data-i18n="kumite_undoScore">↺ Undo Score</button>
+            </div>
+            <div class="penalty-section">
+              <h4 data-i18n="kumite_penalties">Penalties</h4>
+              <div class="penalty-btns">
+                <button class="btn btn-ghost btn-sm" onclick="addPenalty('red','chukoku')">Chukoku (Warning)</button>
+                <button class="btn btn-ghost btn-sm" style="color:var(--gold);border-color:var(--gold)" onclick="addPenalty('red','keikoku')">Keikoku (+1 opp)</button>
+                <button class="btn btn-danger btn-sm" onclick="addPenalty('red','hansoku')">Hansoku (Disqualify)</button>
+                <button class="btn btn-ghost btn-sm" onclick="undoPenalty('red')" data-i18n="kumite_undoPenalty">↺ Undo Penalty</button>
+              </div>
+              <div class="penalty-count">Penalties: <span id="redPenalties">0</span></div>
+            </div>
+          </div>
+
+          <!-- CENTER -->
+          <div class="center-panel">
+            <div class="timer-card">
+              <div class="timer-label" data-i18n="kumite_matchTimer">Match Timer</div>
+              <div class="timer-val timer-green" id="timerDisplay">3:00</div>
+              <div class="timer-status" id="timerStatus">READY</div>
+              <div class="timer-btns">
+                <button class="btn btn-green btn-sm" onclick="startTimer()">▶</button>
+                <button class="btn btn-ghost btn-sm" onclick="pauseTimer()">⏸</button>
+                <button class="btn btn-ghost btn-sm" onclick="resetTimer()">⏹</button>
+              </div>
+            </div>
+
+            <div class="match-info-card">
+              <div class="match-info-row"><span class="key" data-i18n="kumite_category">Category</span><span class="val" id="infoCategory">—</span></div>
+              <div class="match-info-row"><span class="key" data-i18n="kumite_round">Round</span><span class="val" id="infoRound">—</span></div>
+              <div class="match-info-row"><span class="key">Status</span><span class="val" id="infoStatus">Ready</span></div>
+            </div>
+
+            <div class="end-btns">
+              <button class="btn btn-danger" onclick="endMatch()" data-i18n="kumite_endMatch">🏁 End Match</button>
+              <button class="btn btn-ghost btn-sm" onclick="medicalTimeout()" data-i18n="kumite_medTimeout">🏥 Medical Timeout</button>
+            </div>
+          </div>
+
+          <!-- BLUE -->
+          <div class="corner-score-panel blue">
+            <div class="corner-label blue">Blue Corner — 青</div>
+            <div class="corner-name" id="blueDisplayName">—</div>
+            <div class="corner-club" id="blueDisplayClub">—</div>
+            <div class="main-score blue" id="blueScore">0</div>
+            <div class="breakdown">
+              <span><div class="val" id="blueYuko">0</div>Yūkō</span>
+              <span><div class="val" id="blueWazaari">0</div>Waza-ari</span>
+              <span><div class="val" id="blueIppon">0</div>Ippon</span>
+            </div>
+            <div class="score-btns">
+              <button class="btn btn-success" onclick="addScore('blue','yuko')">有効 Yūkō &nbsp;+1</button>
+              <button class="btn btn-primary" onclick="addScore('blue','wazaari')">技あり Waza-ari &nbsp;+2</button>
+              <button class="btn btn-blue"   onclick="addScore('blue','ippon')">一本 Ippon &nbsp;+3</button>
+              <button class="btn btn-ghost btn-sm" onclick="undoScore('blue')" data-i18n="kumite_undoScore">↺ Undo Score</button>
+            </div>
+            <div class="penalty-section">
+              <h4 data-i18n="kumite_penalties">Penalties</h4>
+              <div class="penalty-btns">
+                <button class="btn btn-ghost btn-sm" onclick="addPenalty('blue','chukoku')">Chukoku (Warning)</button>
+                <button class="btn btn-ghost btn-sm" style="color:var(--gold);border-color:var(--gold)" onclick="addPenalty('blue','keikoku')">Keikoku (+1 opp)</button>
+                <button class="btn btn-danger btn-sm" onclick="addPenalty('blue','hansoku')">Hansoku (Disqualify)</button>
+                <button class="btn btn-ghost btn-sm" onclick="undoPenalty('blue')" data-i18n="kumite_undoPenalty">↺ Undo Penalty</button>
+              </div>
+              <div class="penalty-count">Penalties: <span id="bluePenalties">0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/sound.js"></script>
+  <script src="../js/theme-switcher.js"></script>
+  <script src="../js/keyboard-shortcuts.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/kumite.js"></script>
+  <script>
+    loadSoundSettings();
+    I18N.init();
+    KeyboardShortcuts.init('kumite');
+    
+    // Listen for keyboard shortcut actions
+    document.addEventListener('shortcutAction', (e) => {
+      const action = e.detail.action;
+      switch(action) {
+        case 'toggleTimer':
+          document.getElementById('timerBtn')?.click();
+          break;
+        case 'redScore':
+          if (window.addScore) addScore('red', 'yuko');
+          break;
+        case 'redScore2':
+          if (window.addScore) addScore('red', 'wazaari');
+          break;
+        case 'redScore3':
+          if (window.addScore) addScore('red', 'ippon');
+          break;
+        case 'blueScore':
+          if (window.addScore) addScore('blue', 'yuko');
+          break;
+        case 'blueScore2':
+          if (window.addScore) addScore('blue', 'wazaari');
+          break;
+        case 'blueScore3':
+          if (window.addScore) addScore('blue', 'ippon');
+          break;
+        case 'redPenalty':
+          if (window.addPenalty) addPenalty('red');
+          break;
+        case 'bluePenalty':
+          if (window.addPenalty) addPenalty('blue');
+          break;
+        case 'undo':
+          document.getElementById('undoBtn')?.click();
+          break;
+        case 'medTimeout':
+          alert('Medical timeout - Timer paused');
+          break;
+        case 'endMatch':
+          document.getElementById('endBtn')?.click();
+          break;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kumite Scoring</title>
+    <link href="../public/css/professional-design.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-header">
+        <div class="row">
+            <div class="col">
+                <h1>🥊 組手 (Kumite) Scoring</h1>
+            </div>
+            <div class="col text-right">
+                <div class="controls">
+                    <button class="btn-pro btn-primary" onclick="openDisplay()">📺 Display</button>
+                    <button class="btn-pro" onclick="goBack()">← Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function goBack() {
+            const { ipcRenderer } = require('electron');
+            ipcRenderer.send('close-display-window');
+            window.location.href = 'main.html';
+        }
+        
+
+    </script>
+        </div>
+    </div>
+
+    <div class="main-content fade-in">
+        <div class="card">
+            <div class="card-header">
+                <h3>組手 (Kumite) - Fighting Competition Setup</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="competitor-card red">
+                            <h4 style="color: var(--danger);">🔴 赤 (Red) Corner</h4>
+                            <div class="form-group">
+                                <label>Fighter Name:</label>
+                                <input type="text" id="redName" class="form-control" placeholder="Fighter Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Club/Team:</label>
+                                <input type="text" id="redClub" class="form-control" placeholder="Club/Team">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="competitor-card blue">
+                            <h4 style="color: var(--primary);">🔵 青 (Blue) Corner</h4>
+                            <div class="form-group">
+                                <label>Fighter Name:</label>
+                                <input type="text" id="blueName" class="form-control" placeholder="Fighter Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Club/Team:</label>
+                                <input type="text" id="blueClub" class="form-control" placeholder="Club/Team">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            <div class="match-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                <div class="form-group">
+                    <label>Category:</label>
+                    <input type="text" id="category" class="form-control" placeholder="e.g., Senior Male -75kg">
+                </div>
+                <div class="form-group">
+                    <label>Round:</label>
+                    <select id="round" class="form-control">
+                        <option value="preliminary">Preliminary</option>
+                        <option value="quarter-final">Quarter Final</option>
+                        <option value="semi-final">Semi Final</option>
+                        <option value="final">Final</option>
+                    </select>
+                </div>
+            </div>
+            
+                <div class="text-center mt-4">
+                    <button class="btn-pro btn-success btn-lg" onclick="startKumiteMatch()">スタート (Start) Match</button>
+                    <button class="btn-pro btn-danger" onclick="resetMatch()">リセット (Reset)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="kumiteScoring" class="scoring-panel card-glass" style="display: none; margin-top: 30px;">
+            <div class="timer-section">
+                <div class="timer-display timer-modern" id="timerDisplay">3:00</div>
+                <div class="timer-controls" style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+                    <button class="btn-modern btn-success" onclick="startTimer()">⏵ Start</button>
+                    <button class="btn-modern btn-danger" onclick="pauseTimer()">⏸ Pause</button>
+                    <button class="btn-modern btn-primary" onclick="resetTimer()">⏹ Reset</button>
+                </div>
+            </div>
+            
+            <div class="competitor-scores" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div class="red-corner competitor-modern" style="border-color: #d13438;">
+                    <h3 id="redCornerName">Red Corner</h3>
+                    <div class="score-display score-modern" id="redScore">0</div>
+                    <div class="score-breakdown" style="margin: 20px 0; font-size: 16px;">
+                        <small>Y:<span id="redYuko">0</span> W:<span id="redWazaari">0</span> I:<span id="redIppon">0</span></small>
+                    </div>
+                    <div class="score-buttons" style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
+                        <button class="btn-pro btn-success" onclick="addScore('red', 'yuko')">有効 (Yūkō) +1</button>
+                        <button class="btn-pro btn-primary" onclick="addScore('red', 'wazaari')">技あり (Waza-ari) +2</button>
+                        <button class="btn-pro btn-danger" onclick="addScore('red', 'ippon')">一本 (Ippon) +3</button>
+                        <button class="btn-pro" onclick="undoScore('red')" style="background: var(--gray-600); font-size: 12px;">↺ Undo Score</button>
+                    </div>
+                    <div class="penalty-section">
+                        <h4 style="margin-bottom: 15px;">Penalties</h4>
+                        <div class="penalty-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="btn-pro" onclick="addPenalty('red', 'chukoku')" style="background: #666; font-size: 14px; padding: 8px 16px;">Chukoku</button>
+                            <button class="btn-pro" onclick="addPenalty('red', 'keikoku')" style="background: #ff8c00; font-size: 14px; padding: 8px 16px;">Keikoku</button>
+                            <button class="btn-pro btn-danger" onclick="addPenalty('red', 'hansoku')" style="font-size: 14px; padding: 8px 16px;">Hansoku</button>
+                            <button class="btn-pro" onclick="undoPenalty('red')" style="background: var(--gray-600); font-size: 12px; padding: 6px 12px;">↺ Undo Penalty</button>
+                        </div>
+                        <div class="penalty-count" style="margin-top: 15px; font-weight: bold;">Penalties: <span id="redPenalties">0</span></div>
+                    </div>
+                </div>
+                
+                <div class="blue-corner competitor-modern" style="border-color: #0078d4;">
+                    <h3 id="blueCornerName">Blue Corner</h3>
+                    <div class="score-display score-modern" id="blueScore">0</div>
+                    <div class="score-breakdown" style="margin: 20px 0; font-size: 16px;">
+                        <small>Y:<span id="blueYuko">0</span> W:<span id="blueWazaari">0</span> I:<span id="blueIppon">0</span></small>
+                    </div>
+                    <div class="score-buttons" style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
+                        <button class="btn-pro btn-success" onclick="addScore('blue', 'yuko')">有効 (Yūkō) +1</button>
+                        <button class="btn-pro btn-primary" onclick="addScore('blue', 'wazaari')">技あり (Waza-ari) +2</button>
+                        <button class="btn-pro btn-danger" onclick="addScore('blue', 'ippon')">一本 (Ippon) +3</button>
+                        <button class="btn-pro" onclick="undoScore('blue')" style="background: var(--gray-600); font-size: 12px;">↺ Undo Score</button>
+                    </div>
+                    <div class="penalty-section">
+                        <h4 style="margin-bottom: 15px;">Penalties</h4>
+                        <div class="penalty-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="btn-pro" onclick="addPenalty('blue', 'chukoku')" style="background: #666; font-size: 14px; padding: 8px 16px;">Chukoku</button>
+                            <button class="btn-pro" onclick="addPenalty('blue', 'keikoku')" style="background: #ff8c00; font-size: 14px; padding: 8px 16px;">Keikoku</button>
+                            <button class="btn-pro btn-danger" onclick="addPenalty('blue', 'hansoku')" style="font-size: 14px; padding: 8px 16px;">Hansoku</button>
+                            <button class="btn-pro" onclick="undoPenalty('blue')" style="background: var(--gray-600); font-size: 12px; padding: 6px 12px;">↺ Undo Penalty</button>
+                        </div>
+                        <div class="penalty-count" style="margin-top: 15px; font-weight: bold;">Penalties: <span id="bluePenalties">0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="match-actions" style="text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 20px;">
+                <button class="btn-modern btn-danger" onclick="endMatch()">🏁 End Match</button>
+                <button class="btn-modern btn-primary" onclick="medicalTimeout()">🏥 Medical Timeout</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="kumite.js"></script>
+    <script src="notifications.js"></script>
+</body>
+</html>

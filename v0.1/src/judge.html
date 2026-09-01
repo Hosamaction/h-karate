@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judge Panel</title>
+    <link href="../public/css/style.css" rel="stylesheet">
+</head>
+<body class="judge-panel">
+    <div class="judge-header">
+        <h1 id="judgeTitle">審判 (Judge) Panel</h1>
+        <div class="judge-info">
+            <span id="currentMatch">No active match</span>
+        </div>
+    </div>
+
+    <!-- Kata Judging Interface -->
+    <div id="kataJudging" class="kata-judging">
+        <div class="performer-info">
+            <h2 id="performerName">Competitor Name</h2>
+            <p id="performerClub">Club Name</p>
+        </div>
+        
+        <div class="scoring-form">
+            <div class="score-group">
+                <label>技術 (Technical) Score (0.0 - 7.0)</label>
+                <div class="score-input-group">
+                    <button class="btn btn-minus" onclick="adjustScore('technical', -0.1)">-</button>
+                    <input type="number" id="technicalScore" min="0" max="7" step="0.1" value="0.0">
+                    <button class="btn btn-plus" onclick="adjustScore('technical', 0.1)">+</button>
+                </div>
+            </div>
+            
+            <div class="score-group">
+                <label>運動 (Athletic) Score (0.0 - 3.0)</label>
+                <div class="score-input-group">
+                    <button class="btn btn-minus" onclick="adjustScore('athletic', -0.1)">-</button>
+                    <input type="number" id="athleticScore" min="0" max="3" step="0.1" value="0.0">
+                    <button class="btn btn-plus" onclick="adjustScore('athletic', 0.1)">+</button>
+                </div>
+            </div>
+            
+            <div class="total-score">
+                <h3>Total スコア (Score): <span id="totalScore">0.0</span></h3>
+            </div>
+            
+            <div class="submit-section">
+                <button class="btn btn-success btn-large" onclick="submitScore()">Submit Score</button>
+                <button class="btn btn-secondary" onclick="clearScore()">Clear</button>
+            </div>
+        </div>
+        
+        <div class="quick-scores">
+            <h4>Quick Scores</h4>
+            <div class="quick-buttons">
+                <button class="btn btn-quick" onclick="setQuickScore(5.0, 2.0)">Good (5.0 + 2.0)</button>
+                <button class="btn btn-quick" onclick="setQuickScore(6.0, 2.5)">Very Good (6.0 + 2.5)</button>
+                <button class="btn btn-quick" onclick="setQuickScore(7.0, 3.0)">Excellent (7.0 + 3.0)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kumite Judging Interface -->
+    <div id="kumiteJudging" class="kumite-judging" style="display: none;">
+        <div class="match-info">
+            <h2>Kumite Match</h2>
+            <div class="competitors">
+                <div class="red-info">
+                    <h3>Red Corner</h3>
+                    <p id="redName">Competitor 1</p>
+                </div>
+                <div class="blue-info">
+                    <h3>Blue Corner</h3>
+                    <p id="blueName">Competitor 2</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="judge-actions">
+            <h3>Judge Actions</h3>
+            <div class="action-buttons">
+                <button class="btn btn-flag red-flag" onclick="raiseFlag('red')">Red Flag</button>
+                <button class="btn btn-flag blue-flag" onclick="raiseFlag('blue')">Blue Flag</button>
+                <button class="btn btn-no-score" onclick="noScore()">No Score</button>
+            </div>
+            
+            <div class="current-call">
+                <h4>Current Call: <span id="currentCall">None</span></h4>
+                <button class="btn btn-confirm" onclick="confirmCall()" disabled>Confirm</button>
+                <button class="btn btn-cancel" onclick="cancelCall()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="judge.js"></script>
+    <script src="notifications.js"></script>
+</body>
+</html>

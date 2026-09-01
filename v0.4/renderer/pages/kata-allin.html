@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H Karate — Kata All-In</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    .two-col { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+
+    .competitor-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-md); transition: var(--transition); }
+    .competitor-row:hover { background: rgba(255,255,255,0.05); }
+    .competitor-row .comp-num { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted); width: 24px; flex-shrink: 0; }
+    .competitor-row .comp-info { flex: 1; }
+    .competitor-row .comp-name { font-weight: 600; font-size: 0.9rem; }
+    .competitor-row .comp-club { font-size: 0.78rem; color: var(--text-muted); }
+    .competitor-row .comp-score { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; color: var(--green); }
+    .competitor-row.eliminated { opacity: 0.35; }
+    .competitor-row.performing { border-color: var(--gold); background: var(--gold-dim); }
+
+    .bracket-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .bracket-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-align: center; cursor: pointer; transition: var(--transition); }
+    .bracket-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .bracket-card.active { border-color: var(--gold); background: var(--gold-dim); }
+    .bracket-card.done   { border-color: var(--green); background: var(--green-dim); opacity: 0.7; }
+    .bracket-card.eliminated { opacity: 0.3; pointer-events: none; }
+    .bracket-card .bc-rank  { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; }
+    .bracket-card .bc-name  { font-weight: 700; font-size: 0.9rem; margin-bottom: 2px; }
+    .bracket-card .bc-club  { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+    .bracket-card .bc-score { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 900; color: var(--green); }
+    .bracket-card .bc-status{ font-size: 0.7rem; margin-top: 6px; }
+
+    .judge-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .judge-chip { padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-muted); }
+    .judge-chip.scored { background: var(--green-dim); border-color: rgba(34,197,94,0.4); color: var(--green); }
+
+    .leaderboard-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--radius-md); transition: var(--transition); }
+    .leaderboard-row:nth-child(1) { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+    .leaderboard-row:nth-child(2) { background: rgba(148,163,184,0.06); border: 1px solid rgba(148,163,184,0.15); }
+    .leaderboard-row:nth-child(3) { background: rgba(180,83,9,0.06); border: 1px solid rgba(180,83,9,0.15); }
+    .lb-rank { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 900; width: 28px; text-align: center; }
+    .lb-rank.gold   { color: var(--gold); }
+    .lb-rank.silver { color: #94a3b8; }
+    .lb-rank.bronze { color: #b45309; }
+    .lb-info { flex: 1; }
+    .lb-name  { font-weight: 700; font-size: 0.9rem; }
+    .lb-club  { font-size: 0.78rem; color: var(--text-muted); }
+    .lb-score { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 900; color: var(--green); }
+
+    #setupSection    { }
+    #tournamentSection { display: none; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="logo" href="home.html">🥋 H <span>KARATE</span></a>
+      <nav class="header-nav">
+        <a href="home.html" data-i18n="nav_home">Home</a>
+        <a href="kumite.html" data-i18n="nav_kumite">Kumite</a>
+        <a href="kata.html" data-i18n="nav_kata">Kata 1v1</a>
+        <a href="kata-allin.html" class="active" data-i18n="nav_kataAllin">Kata All-In</a>
+        <a href="bracket.html" data-i18n="nav_bracket">Bracket</a>
+        <a href="history.html" data-i18n="nav_history">History</a>
+        <a href="settings.html" data-i18n="nav_settings">Settings</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-sm" id="judgeServerBtn" onclick="toggleJudgeServer()">Start Judge Server</button>
+        <button class="btn btn-ghost btn-sm" onclick="openDisplay()" data-i18n="btn_display">📺 Display</button>
+        <button class="btn btn-ghost btn-sm" onclick="go('home.html')" data-i18n="btn_back">← Back</button>
+      </div>
+    </header>
+
+    <main class="page-content wide">
+
+      <!-- SETUP -->
+      <div id="setupSection">
+        <div class="flex-between mb-24">
+          <div><h2>🏆 Kata All-In Tournament</h2><p class="text-sm text-muted">Elimination bracket with multiple rounds</p></div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <div class="card mb-16">
+              <div class="card-header"><h3 data-i18n="allin_tourSettings">Tournament Settings</h3></div>
+              <div class="card-body">
+                <div class="form-group mb-12"><label data-i18n="allin_tourName">Tournament Name</label><input type="text" id="tournamentName" placeholder="e.g. Regional Kata Championship"></div>
+                <div class="form-group mb-12"><label data-i18n="kumite_category">Category</label><input type="text" id="category" placeholder="e.g. Senior Male Kata"></div>
+                <div class="form-group">
+                  <label data-i18n="kata_numJudges">Number of Judges</label>
+                  <select id="judgeCount">
+                    <option value="3">3 Judges</option>
+                    <option value="5" selected>5 Judges</option>
+                    <option value="7">7 Judges</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3 data-i18n="allin_addComp">Add Competitor</h3></div>
+              <div class="card-body">
+                <div class="form-group mb-12"><label data-i18n="kata_competitorName">Name</label><input type="text" id="newName" placeholder="Competitor name"></div>
+                <div class="form-group mb-16"><label data-i18n="kumite_club">Club</label><input type="text" id="newClub" placeholder="Club name"></div>
+                <button class="btn btn-green w-full" onclick="addCompetitor()" data-i18n="allin_addComp">➕ Add Competitor</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 data-i18n="allin_competitors">Competitors <span class="badge badge-accent" id="compCount">0</span></h3>
+              <span class="text-sm text-muted" data-i18n="allin_minRequired">Minimum 4 required</span>
+            </div>
+            <div class="card-body">
+              <div id="competitorList" style="display:flex;flex-direction:column;gap:8px;min-height:120px"></div>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-primary btn-lg" onclick="startTournament()" data-i18n="allin_startTour">🏆 Start Tournament</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOURNAMENT -->
+      <div id="tournamentSection">
+        <div class="flex-between mb-20">
+          <div>
+            <h2 id="tournamentTitle">Tournament</h2>
+            <p class="text-sm text-muted" id="roundInfo">Round 1</p>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn btn-ghost btn-sm" onclick="showResults()">📊 Results</button>
+            <button class="btn btn-ghost btn-sm" onclick="resetTournament()">↺ Reset</button>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- LEFT: current performer + controls -->
+          <div>
+            <div class="card mb-16">
+              <div class="card-header"><h3 data-i18n="allin_currPerformer">Current Performer</h3></div>
+              <div class="card-body">
+                <div id="noPerformerMsg" class="text-muted text-sm text-center" style="padding:16px" data-i18n="allin_clickToSelect">Click a competitor card to select</div>
+                <div id="performerInfo" class="hidden">
+                  <div style="font-size:1.2rem;font-weight:800;margin-bottom:4px" id="performerName">—</div>
+                  <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px" id="performerClub">—</div>
+                  <div class="judge-chips" id="performerJudgeChips"></div>
+                  <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+                    <button class="btn btn-green" onclick="startPerformance()" data-i18n="allin_startPerf">▶ Start Performance</button>
+                    <button class="btn btn-ghost" onclick="endPerformance()" data-i18n="allin_endScore">⏹ End & Score</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3 data-i18n="allin_roundControl">Round Control</h3></div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-primary" onclick="finishRound()" data-i18n="allin_finishRound">✅ Finish Round & Advance</button>
+                <button class="btn btn-ghost" onclick="showResults()" data-i18n="allin_showLb">📊 Show Leaderboard</button>
+                <button class="btn btn-danger" onclick="endTournament()" data-i18n="allin_endTour">🏁 End Tournament</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: bracket + leaderboard -->
+          <div>
+            <div class="card mb-16">
+              <div class="card-header"><h3 id="bracketTitle">Round 1 — All Competitors</h3></div>
+              <div class="card-body">
+                <div class="bracket-grid" id="bracketGrid"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3 data-i18n="allin_liveLb">Live Leaderboard</h3></div>
+              <div class="card-body">
+                <div id="leaderboard" style="display:flex;flex-direction:column;gap:6px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/sound.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/kata-allin.js"></script>
+  <script>loadSoundSettings(); I18N.init();</script>
+</body>
+</html>

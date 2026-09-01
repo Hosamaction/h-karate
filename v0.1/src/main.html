@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H Karate Scoring System</title>
+    <link href="../public/css/professional-design.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-header">
+        <div class="row">
+            <div class="col">
+                <h1>🥋 H KARATE - Professional Scoring System</h1>
+            </div>
+            <div class="col text-right">
+                <div class="controls">
+                    <!-- Display button only in competition sections -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="text-center mb-5">
+            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">Select Competition Type</h2>
+            <p style="color: var(--gray-300); font-size: 1.125rem;">Choose the type of karate competition to begin scoring</p>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="card fade-in" onclick="openKumite()" style="cursor: pointer; position: relative; overflow: hidden;">
+                    <div class="card-body text-center">
+                        <div style="font-size: 5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">🥊</div>
+                        <h3 style="font-size: 1.75rem; margin-bottom: 0.5rem;">組手 (Kumite)</h3>
+                        <h5 style="color: var(--gray-300); margin-bottom: 1.5rem;">Fighting Competition</h5>
+                        <ul class="text-left mt-3" style="list-style: none; padding: 0; color: var(--gray-200);">
+                            <li style="margin-bottom: 0.5rem;">⚡ 3-minute timed matches</li>
+                            <li style="margin-bottom: 0.5rem;">🎯 Point scoring system</li>
+                            <li style="margin-bottom: 0.5rem;">⚡ Real-time scoring</li>
+                            <li style="margin-bottom: 0.5rem;">⚠️ Penalty tracking</li>
+                        </ul>
+                        <button class="btn-pro btn-primary btn-lg mt-4">Start Kumite</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-6">
+                <div class="card fade-in" onclick="showKataOptions()" style="cursor: pointer; position: relative; overflow: hidden;">
+                    <div class="card-body text-center">
+                        <div style="font-size: 5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">🥋</div>
+                        <h3 style="font-size: 1.75rem; margin-bottom: 0.5rem;">形 (Kata)</h3>
+                        <h5 style="color: var(--gray-300); margin-bottom: 1.5rem;">Form Competition</h5>
+                        <ul class="text-left mt-3" style="list-style: none; padding: 0; color: var(--gray-200);">
+                            <li style="margin-bottom: 0.5rem;">🥋 1v1 or Tournament modes</li>
+                            <li style="margin-bottom: 0.5rem;">👥 Multiple judge panels</li>
+                            <li style="margin-bottom: 0.5rem;">📊 Technical & Athletic scoring</li>
+                            <li style="margin-bottom: 0.5rem;">🏆 Elimination rounds</li>
+                        </ul>
+                        <button class="btn-pro btn-success btn-lg mt-4">Select Kata Mode</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kata Options Modal -->
+    <div id="kataModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="card" style="max-width: 600px; margin: 2rem;">
+            <div class="card-header">
+                <h3>Select 形 (Kata) Competition Mode</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card" onclick="openKata1v1()" style="cursor: pointer;">
+                            <div class="card-body text-center">
+                                <h4>Kata 1v1</h4>
+                                <p>Traditional head-to-head kata competition with red and blue corners</p>
+                                <button class="btn-pro btn-primary">Select 1v1</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card" onclick="openKataAllIn()" style="cursor: pointer;">
+                            <div class="card-body text-center">
+                                <h4>Kata All-In</h4>
+                                <p>Tournament style with elimination rounds and multiple competitors</p>
+                                <button class="btn-pro btn-success">Select All-In</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <button class="btn-pro" onclick="closeKataModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        function openKumite() {
+            window.location.href = 'kumite.html';
+        }
+        
+        function showKataOptions() {
+            document.getElementById('kataModal').style.display = 'flex';
+        }
+        
+        function closeKataModal() {
+            document.getElementById('kataModal').style.display = 'none';
+        }
+        
+        function openKata1v1() {
+            window.location.href = 'kata.html';
+        }
+        
+        function openKataAllIn() {
+            window.location.href = 'kata-allin.html';
+        }
+    </script>
+    <script src="notifications.js"></script>
+</body>
+</html>

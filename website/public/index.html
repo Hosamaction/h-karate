@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional karate tournament scoring system. Unlimited tournaments, unlimited competitors - from just $5/month. Works offline, multi-language support.">
+    <title>H Karate - Professional Tournament Scoring System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .hero .features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .hero .feature-item {
+            font-size: 1.1em;
+        }
+
+        .cta-buttons {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Pain Point Section */
+        .pain-point {
+            background: #fff3cd;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .pain-point h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #856404;
+        }
+
+        .pain-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .pain-box {
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        .pain-bad {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+        }
+
+        .pain-good {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+        }
+
+        .pain-box h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .pain-box p {
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .pricing h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .pricing .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 50px;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.popular {
+            border: 3px solid #667eea;
+            transform: scale(1.05);
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .price-period {
+            font-size: 0.4em;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .monthly-equivalent {
+            color: #28a745;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .savings {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        .features-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .btn-pricing {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-pricing:hover {
+            background: #5568d3;
+        }
+
+        /* Comparison Table */
+        .comparison {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .comparison h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+        }
+
+        .comparison-table {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.1em;
+        }
+
+        td {
+            font-size: 1em;
+        }
+
+        td:first-child {
+            font-weight: 600;
+        }
+
+        .check {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .cross {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .warning {
+            color: #ffc107;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        /* Calculator Section */
+        .calculator {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .calculator h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        .calculator-box {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .calculator input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .calc-result {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            font-size: 1.2em;
+        }
+
+        .calc-savings {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffd700;
+            margin-top: 10px;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .features-section h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-box {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .feature-box h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-box p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Policies Section */
+        .policies {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .policies h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+        }
+
+        .policies-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .policy-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .policy-box h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .policy-box ul {
+            list-style: none;
+            line-height: 2;
+        }
+
+        .policy-box li:before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .testimonial {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .testimonial p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.3em;
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .pricing-cards, .features-grid, .testimonial-grid, .policies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pain-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">🥋 H Karate</div>
+            <nav>
+                <a href="#pricing">Pricing</a>
+                <a href="#features">Features</a>
+                <a href="#comparison">Compare</a>
+                <a href="admin.html">Admin Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Why Pay Per Competitor?</h1>
+            <p class="subtitle">Unlimited Tournaments for $12.99/Month</p>
+            <p style="font-size: 1.2em; margin-top: 20px;">Stop worrying about event size. Pay once, score unlimited athletes.</p>
+            
+            <div class="features">
+                <div class="feature-item">✓ Unlimited Tournaments</div>
+                <div class="feature-item">✓ Unlimited Competitors</div>
+                <div class="feature-item">✓ Works Offline 7 Days</div>
+                <div class="feature-item">✓ Multi-Language</div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="#pricing" class="btn btn-primary">See Pricing</a>
+                <a href="#comparison" class="btn btn-secondary">Compare vs Others</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Point Section -->
+    <section class="pain-point">
+        <div class="container">
+            <h2>Tired of Per-Competitor Fees?</h2>
+            
+            <div class="pain-comparison">
+                <div class="pain-box pain-bad">
+                    <h3>❌ Other Apps</h3>
+                    <p>$1-$2 per competitor = unpredictable costs</p>
+                    <p style="margin-top: 15px;">100 athletes = $100-200<br>
+                    200 athletes = $200-400<br>
+                    Big event? Big bill!</p>
+                </div>
+
+                <div class="pain-box pain-good">
+                    <h3>✅ H Karate</h3>
+                    <p>Flat $12.99/month = unlimited competitors</p>
+                    <p style="margin-top: 15px;">100 athletes = $12.99<br>
+                    200 athletes = $12.99<br>
+                    Your price never changes!</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 40px; font-size: 1.3em; font-weight: 600; color: #856404;">
+                Run 10 tournaments or 100. Host 50 athletes or 500.<br>
+                Your price stays the same.
+            </p>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2>Simple, Predictable Pricing</h2>
+            <p class="subtitle">No per-competitor fees. No surprises. Just professional scoring.</p>
+
+            <div class="pricing-cards">
+                <!-- Monthly -->
+                <div class="pricing-card">
+                    <h3>Monthly</h3>
+                    <div class="price">$12.99<span class="price-period">/month</span></div>
+                    <p style="color: #666; margin-bottom: 20px;">Flexible billing</p>
+                    
+                    <ul class="features-list">
+                        <li>Unlimited tournaments</li>
+                        <li>Unlimited competitors</li>
+                        <li>Works offline 7 days</li>
+                        <li>Multi-language support</li>
+                        <li>Auto updates</li>
+                        <li>Email support (48h)</li>
+                        <li>Phone support</li>
+                        <li>Cancel anytime</li>
+                    </ul>
+
+                    <button class="btn-pricing" onclick="window.location.href='#contact'">Get Monthly</button>
+                </div>
+
+                <!-- Annual (Popular) -->
+                <div class="pricing-card popular">
+                    <span class="badge">⭐ MOST POPULAR</span>
+                    <h3>Annual</h3>
+                    <div class="price">$69.99<span class="price-period">/year</span></div>
+                    <div class="monthly-equivalent">Only $5.83/month</div>
+                    <div class="savings">💰 Save $86/year (54% OFF!)</div>
+                    
+                    <ul class="features-list">
+                        <li>Everything in Monthly</li>
+                        <li>Priority support (24h)</li>
+                        <li>Locked-in pricing</li>
+                        <li>6+ months FREE</li>
+                        <li>Best value guarantee</li>
+                    </ul>
+
+                    <button class="btn-pricing" onclick="window.location.href='#contact'">Save 54% - Go Annual</button>
+                </div>
+
+                <!-- 2-Year -->
+                <div class="pricing-card">
+                    <span class="badge">💎 BEST VALUE</span>
+                    <h3>2-Year</h3>
+                    <div class="price">$119.99<span class="price-period">/2 years</span></div>
+                    <div class="monthly-equivalent">Only $5.00/month</div>
+                    <div class="savings">💰 Save $191 (61% OFF!)</div>
+                    
+                    <ul class="features-list">
+                        <li>Everything in Annual</li>
+                        <li>Priority support (12h)</li>
+                        <li>Price locked 2 years</li>
+                        <li>Early feature access</li>
+                        <li>Maximum savings</li>
+                    </ul>
+
+                    <button class="btn-pricing" onclick="window.location.href='#contact'">Lock in $5/month</button>
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 40px; font-size: 1.1em; color: #666;">
+                All plans include unlimited tournaments, unlimited competitors, and 10-hour daily support
+            </p>
+        </div>
+    </section>
+
+    <!-- Savings Calculator -->
+    <section class="calculator">
+        <div class="container">
+            <h2>How Much Will You Save?</h2>
+            <div class="calculator-box">
+                <label style="font-size: 1.2em; display: block; margin-bottom: 10px;">Average competitors per month:</label>
+                <input type="number" id="competitors" value="100" oninput="calculateSavings()" min="10" max="1000">
+                
+                <div class="calc-result">
+                    <p>With competitor-based pricing: <strong id="otherCost">$100-200/month</strong></p>
+                    <p>With H Karate: <strong>$12.99/month</strong></p>
+                    <div class="calc-savings">
+                        YOU SAVE: <span id="savings">$87-187/month</span>
+                    </div>
+                    <p style="margin-top: 10px;">Annual savings: <strong id="annualSavings">$1,044-2,244</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function calculateSavings() {
+            const competitors = parseInt(document.getElementById('competitors').value) || 100;
+            const minCost = competitors * 1;
+            const maxCost = competitors * 2;
+            const hkarateCost = 12.99;
+            
+            const minSavings = minCost - hkarateCost;
+            const maxSavings = maxCost - hkarateCost;
+            
+            const annualMinSavings = Math.round(minSavings * 12);
+            const annualMaxSavings = Math.round(maxSavings * 12);
+            
+            document.getElementById('otherCost').textContent = `$${minCost}-${maxCost}/month`;
+            document.getElementById('savings').textContent = `$${Math.round(minSavings)}-${Math.round(maxSavings)}/month`;
+            document.getElementById('annualSavings').textContent = `$${annualMinSavings.toLocaleString()}-${annualMaxSavings.toLocaleString()}`;
+        }
+    </script>
+
+    <!-- Comparison Table -->
+    <section id="comparison" class="comparison">
+        <div class="container">
+            <h2>H Karate vs Taikai App</h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>H Karate</th>
+                            <th>Taikai App</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pricing Model</td>
+                            <td>Flat monthly rate</td>
+                            <td>Per competitor</td>
+                        </tr>
+                        <tr>
+                            <td>Cost for 100 competitors</td>
+                            <td style="color: #28a745; font-weight: bold;">$12.99</td>
+                            <td style="color: #dc3545; font-weight: bold;">$100-200</td>
+                        </tr>
+                        <tr>
+                            <td>Unlimited events</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Works offline</td>
+                            <td><span class="check">✓</span> 7 days</td>
+                            <td><span class="warning">⚠</span> Queues only</td>
+                        </tr>
+                        <tr>
+                            <td>Languages</td>
+                            <td>English + Arabic</td>
+                            <td>English + Spanish</td>
+                        </tr>
+                        <tr>
+                            <td>Desktop app</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="cross">✗</span> Mobile only</td>
+                        </tr>
+                        <tr>
+                            <td>Predictable costs</td>
+                            <td><span class="check">✓</span> Always</td>
+                            <td><span class="cross">✗</span> Varies by size</td>
+                        </tr>
+                        <tr>
+                            <td>Phone support</td>
+                            <td><span class="check">✓</span> Included</td>
+                            <td><span class="cross">✗</span> Email only</td>
+                        </tr>
+                        <tr>
+                            <td>Support hours</td>
+                            <td>10 hours/day</td>
+                            <td>Ticket system</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2>Everything You Need to Run Professional Tournaments</h2>
+            
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-Time Scoring</h3>
+                    <p>Instant score updates across all displays. Judges, operators, and spectators see results simultaneously.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">📱</div>
+                    <h3>Multi-Display Support</h3>
+                    <p>Judge panel, main display, and audience screens all synchronized automatically.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Multi-Language</h3>
+                    <p>Full support for English and Arabic interfaces. Perfect for international tournaments.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">📴</div>
+                    <h3>Works Offline</h3>
+                    <p>Keep scoring for 7 days without internet. Perfect for venues with unreliable WiFi.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Auto Updates</h3>
+                    <p>New features and bug fixes download automatically. Always stay current.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Professional Design</h3>
+                    <p>Beautiful, modern interface that looks professional on any screen size.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">🥋</div>
+                    <h3>Kata & Kumite</h3>
+                    <p>Full support for both kata and kumite scoring with customizable rules.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">💾</div>
+                    <h3>Data Persistence</h3>
+                    <p>Your tournament data is saved automatically. Never lose progress.</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">🔊</div>
+                    <h3>Sound Effects</h3>
+                    <p>Audio cues for starts, stops, and scoring events to enhance the experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Policies -->
+    <section class="policies">
+        <div class="container">
+            <h2>Our Policies</h2>
+            
+            <div class="policies-grid">
+                <div class="policy-box">
+                    <h3>💰 Refund Policy</h3>
+                    <ul>
+                        <li>7-day money-back guarantee</li>
+                        <li>Refund ONLY if license never activated</li>
+                        <li>Once activated = no refunds</li>
+                        <li>License continues working until period ends</li>
+                    </ul>
+                </div>
+
+                <div class="policy-box">
+                    <h3>🔄 Cancellation</h3>
+                    <ul>
+                        <li>Cancel anytime, zero hassle</li>
+                        <li>Service continues until period ends</li>
+                        <li>No partial refunds after activation</li>
+                        <li>Keep using until your paid period expires</li>
+                    </ul>
+                </div>
+
+                <div class="policy-box">
+                    <h3>📞 Support</h3>
+                    <ul>
+                        <li>10 hours/day email & phone support</li>
+                        <li>Monthly: 48h response time</li>
+                        <li>Annual: 24h response time</li>
+                        <li>2-Year: 12h priority response</li>
+                        <li>Emergency hotline for tournament day</li>
+                    </ul>
+                </div>
+
+                <div class="policy-box">
+                    <h3>📴 Offline Usage</h3>
+                    <ul>
+                        <li>Works offline for 7 consecutive days</li>
+                        <li>Day 8: Requires internet validation</li>
+                        <li>After validation: Another 7-day period</li>
+                        <li>Perfect for venues with unreliable WiFi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>What Tournament Organizers Say</h2>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p>"We switched from competitor-based pricing and saved $2,400 in the first year. The flat rate means we can focus on growing our events without worrying about costs."</p>
+                    <div class="testimonial-author">— Tournament Organizer, Dubai</div>
+                </div>
+
+                <div class="testimonial">
+                    <p>"Finally, predictable budgeting for our monthly events. The offline mode saved us during a venue WiFi failure - scoring continued without interruption."</p>
+                    <div class="testimonial-author">— Karate Club Director, USA</div>
+                </div>
+
+                <div class="testimonial">
+                    <p>"The Arabic interface was crucial for our international tournament. Setup took 10 minutes and everything just worked."</p>
+                    <div class="testimonial-author">— Event Coordinator, Jordan</div>
+                </div>
+
+                <div class="testimonial">
+                    <p>"Phone support on tournament day made all the difference. Quick response, real person, problem solved in minutes."</p>
+                    <div class="testimonial-author">— Dojo Owner, UK</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="cta-section">
+        <div class="container">
+            <h2>Ready to Save Money?</h2>
+            <p>Stop paying per competitor. Start with unlimited scoring today.</p>
+            <div class="cta-buttons">
+                <a href="mailto:support@h-karate.com?subject=Purchase License" class="btn btn-primary">Contact Sales</a>
+                <a href="#pricing" class="btn btn-secondary">View Pricing Again</a>
+            </div>
+            <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.9;">
+                Questions? Email us at support@h-karate.com<br>
+                Or use the admin panel to issue licenses: <a href="admin.html" style="color: white; text-decoration: underline;">Admin Login</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 H Karate. All rights reserved.</p>
+            <p style="margin-top: 10px;">
+                <a href="admin.html">Admin Panel</a> | 
+                <a href="mailto:support@h-karate.com">Support</a> | 
+                <a href="https://github.com/Hosamaction/h-karate">GitHub</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
