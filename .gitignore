@@ -16,6 +16,8 @@ npm-debug.log*
 license-server/keys.json
 license-server/licenses.json
 license-server/.env
+license-server/temp-secret.txt
+license-server/temp-key.txt
 
 # OS
 .DS_Store
