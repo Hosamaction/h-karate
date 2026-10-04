@@ -1,0 +1,9 @@
+{
+  "name": "hkarate-license-server",
+  "version": "1.0.0",
+  "description": "H Karate License Server on Vercel",
+  "main": "api/license.js",
+  "engines": {
+    "node": ">=18.x"
+  }
+}

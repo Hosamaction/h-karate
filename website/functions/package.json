@@ -1,0 +1,13 @@
+{
+  "name": "hkarate-license-functions",
+  "version": "1.0.0",
+  "description": "H Karate License Server - Firebase Functions",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0"
+  }
+}

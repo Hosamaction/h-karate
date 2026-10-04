@@ -3,1010 +3,1738 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Professional karate tournament scoring system. Unlimited tournaments, unlimited competitors - from just $5/month. Works offline, multi-language support.">
-    <title>H Karate - Professional Tournament Scoring System</title>
+    <meta name="description" content="Professional karate tournament scoring system. Unlimited tournaments, unlimited competitors - from just $9/month. Works offline, multi-language support.">
+    <title>H Karate — Professional Tournament Scoring System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-base: #0a0a0f;
+            --bg-surface: #12121a;
+            --bg-card: #1a1a24;
+            --bg-card-hover: #20202e;
+            --border: rgba(255,255,255,0.08);
+            
+            --fire-orange: #ff6b35;
+            --fire-red: #ff4757;
+            --fire-yellow: #ffa502;
+            --fire-pink: #ff6348;
+            --fire-gradient: linear-gradient(135deg, #ff6b35 0%, #ff4757 50%, #ffa502 100%);
+            --fire-glow: rgba(255,107,53,0.5);
+            
+            --accent: #ff6b35;
+            --accent-dim: rgba(255,107,53,0.15);
+            --accent-glow: rgba(255,107,53,0.4);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8c8;
+            --text-muted: #6b6b7f;
+            
+            --shadow-fire: 0 8px 32px rgba(255,107,53,0.3);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
             line-height: 1.6;
-            color: #333;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--fire-gradient);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover { opacity: 0.8; }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--fire-gradient);
+            border-radius: 50%;
+            filter: blur(150px);
+            animation: float 20s infinite ease-in-out;
+            top: -100px;
+            right: -100px;
+        }
+
+        .animated-bg::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--fire-gradient);
+            border-radius: 50%;
+            filter: blur(120px);
+            animation: float 15s infinite ease-in-out reverse;
+            bottom: -50px;
+            left: -50px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(100px, -100px) scale(1.1); }
+            66% { transform: translate(-50px, 100px) scale(0.9); }
+        }
+
+        /* Header */
+        .app-header {
+            height: 70px;
+            background: rgba(18,18,26,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 100%;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '🥋';
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 10px var(--fire-glow));
+            animation: pulse 2s infinite;
+        }
+
+        .logo-text {
+            background: var(--fire-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        nav a {
+            padding: 10px 18px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--fire-gradient);
+            opacity: 0.1;
+            transition: left 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--fire-orange);
+            transform: translateY(-2px);
+        }
+
+        nav a:hover::before {
+            left: 0;
+        }
+
+        nav a.active {
+            color: var(--fire-orange);
+            background: rgba(255,107,53,0.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 32px 100px;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(ellipse at top, rgba(255,107,53,0.05) 0%, transparent 60%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1200px;
+            height: 1200px;
+            background: var(--fire-gradient);
+            border-radius: 50%;
+            filter: blur(200px);
+            opacity: 0.08;
+            animation: heroGlow 8s infinite alternate;
+        }
+
+        @keyframes heroGlow {
+            0% { opacity: 0.08; transform: translateX(-50%) scale(1); }
+            100% { opacity: 0.12; transform: translateX(-50%) scale(1.1); }
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 999px;
+            color: var(--fire-orange);
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            box-shadow: 0 0 30px var(--accent-glow);
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+            50% { box-shadow: 0 0 40px var(--accent-glow); }
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            margin-bottom: 28px;
+            background: linear-gradient(135deg, #fff 0%, var(--fire-orange) 50%, var(--fire-yellow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleReveal 1s ease;
+        }
+
+        @keyframes titleReveal {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            line-height: 1.7;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: subtitleReveal 1s ease 0.2s backwards;
+        }
+
+        @keyframes subtitleReveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 36px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-fire {
+            background: var(--fire-gradient);
+            color: #fff;
+            box-shadow: 0 8px 24px var(--accent-glow);
+            border-color: var(--fire-orange);
+        }
+
+        .btn-fire:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px var(--accent-glow);
+        }
+
+        .btn-ghost {
+            background: rgba(255,255,255,0.05);
+            color: var(--fire-orange);
+            border-color: rgba(255,107,53,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255,107,53,0.15);
+            border-color: var(--fire-orange);
+            transform: translateY(-3px);
+        }
+
+        .btn-lg {
+            padding: 20px 44px;
+            font-size: 1.1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: ctaReveal 1s ease 0.4s backwards;
+        }
+
+        @keyframes ctaReveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 64px;
+            margin-top: 80px;
+            flex-wrap: wrap;
+            animation: statsReveal 1s ease 0.6s backwards;
+        }
+
+        @keyframes statsReveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--fire-gradient);
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+        }
+
+        .stat-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: var(--fire-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 32px;
+            position: relative;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 30px;
-            font-weight: 500;
-            transition: opacity 0.3s;
-        }
-
-        nav a:hover {
-            opacity: 0.8;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 100px 20px;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .hero .subtitle {
-            font-size: 1.5em;
-            margin-bottom: 30px;
-            opacity: 0.95;
-        }
-
-        .hero .features {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-
-        .hero .feature-item {
-            font-size: 1.1em;
-        }
-
-        .cta-buttons {
-            margin-top: 40px;
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 15px 40px;
-            font-size: 1.1em;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-block;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: white;
-            color: #667eea;
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-
-        /* Pain Point Section */
-        .pain-point {
-            background: #fff3cd;
-            padding: 60px 20px;
-            text-align: center;
-        }
-
-        .pain-point h2 {
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            color: #856404;
-        }
-
-        .pain-comparison {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        .pain-box {
-            padding: 30px;
-            border-radius: 12px;
-        }
-
-        .pain-bad {
-            background: #f8d7da;
-            border: 2px solid #f5c6cb;
-        }
-
-        .pain-good {
-            background: #d4edda;
-            border: 2px solid #c3e6cb;
-        }
-
-        .pain-box h3 {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-        }
-
-        .pain-box p {
-            font-size: 1.2em;
-            line-height: 1.8;
-        }
-
-        /* Pricing Section */
-        .pricing {
-            padding: 80px 20px;
-            background: #f8f9fa;
-        }
-
-        .pricing h2 {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-
-        .pricing .subtitle {
-            text-align: center;
-            font-size: 1.2em;
-            color: #666;
-            margin-bottom: 50px;
-        }
-
-        .pricing-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .pricing-card {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             position: relative;
-            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 1;
         }
 
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
-
-        .pricing-card.popular {
-            border: 3px solid #667eea;
-            transform: scale(1.05);
-        }
-
-        .badge {
-            position: absolute;
-            top: -15px;
-            right: 20px;
-            background: #667eea;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-
-        .pricing-card h3 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-
-        .price {
-            font-size: 3em;
-            font-weight: bold;
-            color: #667eea;
-            margin: 20px 0;
-        }
-
-        .price-period {
-            font-size: 0.4em;
-            color: #666;
-            font-weight: normal;
-        }
-
-        .monthly-equivalent {
-            color: #28a745;
-            font-size: 0.9em;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .savings {
-            background: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: 600;
-        }
-
-        .features-list {
-            list-style: none;
-            margin: 30px 0;
-        }
-
-        .features-list li {
-            padding: 10px 0;
-            padding-left: 30px;
-            position: relative;
-        }
-
-        .features-list li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #28a745;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        .btn-pricing {
-            width: 100%;
-            padding: 15px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-pricing:hover {
-            background: #5568d3;
-        }
-
-        /* Comparison Table */
-        .comparison {
-            padding: 80px 20px;
-            background: white;
-        }
-
-        .comparison h2 {
+        h2 {
+            font-size: 3rem;
+            font-weight: 900;
             text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 50px;
+            margin-bottom: 20px;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 0%, var(--fire-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .comparison-table {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 20px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 1.1em;
-        }
-
-        td {
-            font-size: 1em;
-        }
-
-        td:first-child {
-            font-weight: 600;
-        }
-
-        .check {
-            color: #28a745;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-
-        .cross {
-            color: #dc3545;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-
-        .warning {
-            color: #ffc107;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-
-        /* Calculator Section */
-        .calculator {
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .calculator h2 {
+        .section-subtitle {
             text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 40px;
-        }
-
-        .calculator-box {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 70px;
             max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.1);
-            padding: 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .calculator input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-
-        .calc-result {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            font-size: 1.2em;
-        }
-
-        .calc-savings {
-            font-size: 2em;
-            font-weight: bold;
-            color: #ffd700;
-            margin-top: 10px;
-        }
-
-        /* Features Section */
-        .features-section {
-            padding: 80px 20px;
-            background: white;
-        }
-
-        .features-section h2 {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 50px;
-        }
-
+        /* Feature Grid */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 40px;
-            max-width: 1100px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 28px;
         }
 
-        .feature-box {
-            text-align: center;
-            padding: 30px;
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--fire-gradient);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--fire-orange);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-fire);
+        }
+
+        .feature-card:hover::before {
+            opacity: 0.05;
         }
 
         .feature-icon {
-            font-size: 3em;
+            font-size: 2.5rem;
             margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 0 10px var(--fire-glow));
+            position: relative;
+            z-index: 1;
         }
 
-        .feature-box h3 {
-            font-size: 1.5em;
-            margin-bottom: 15px;
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
         }
 
-        .feature-box p {
-            color: #666;
-            line-height: 1.8;
+        .feature-card p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
         }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 900px;
+            margin: 70px auto 0;
+            gap: 32px;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            position: relative;
+            transition: all 0.4s;
+            overflow: visible;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--fire-gradient);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--shadow-fire);
+            border-color: var(--fire-orange);
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(255,71,87,0.05) 100%);
+            border: 2px solid var(--fire-orange);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            opacity: 1;
+            height: 8px;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--fire-gradient);
+            color: #fff;
+            padding: 8px 24px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            animation: badgeBounce 2s infinite;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        @keyframes badgeBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-4px); }
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 28px 0;
+            background: var(--fire-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .price-period {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .price-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 36px;
+            min-height: 48px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 36px 0;
+        }
+
+        .pricing-features li {
+            padding: 14px 0;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li::before {
+            content: "✓";
+            color: var(--fire-orange);
+            font-weight: 900;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* Social Proof */
+        .social-proof {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 28px;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            font-weight: 900;
+            background: var(--fire-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.2;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--fire-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .author-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .author-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Trust Section */
+        .trust-section {
+            background: radial-gradient(ellipse at center, rgba(255,107,53,0.05) 0%, transparent 70%);
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-top: 60px;
+        }
+
+        .trust-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            text-align: center;
+        }
+
+        .trust-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px var(--fire-glow));
+        }
+
+        .trust-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: var(--fire-orange);
+        }
+
+        .trust-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* FAQ */
+        .faq-grid {
+            max-width: 900px;
+            margin: 60px auto 0;
+            display: grid;
+            gap: 20px;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .faq-item:hover {
+            border-color: var(--fire-orange);
+            box-shadow: 0 4px 20px rgba(255,107,53,0.1);
+        }
+
+        .faq-item h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--fire-orange);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .faq-item h3::before {
+            content: '→';
+            font-size: 1.3rem;
+            transition: transform 0.3s;
+        }
+
+        .faq-item:hover h3::before {
+            transform: translateX(4px);
+        }
+
+        .faq-item p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* Footer CTA */
+        .footer-cta {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(255,71,87,0.05) 100%);
+            border-top: 1px solid var(--border);
+            padding: 100px 32px;
+            text-align: center;
+        }
+
+        .footer-cta h2 {
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+        }
+
+        .footer-cta .section-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-surface);
+            padding: 60px 32px 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-section h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: var(--fire-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--fire-orange);
+            transform: translateX(4px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 32px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-stats {
+                gap: 40px;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .features-grid,
+            .pricing-grid,
+            .testimonials-grid,
+            .trust-grid {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            nav {
+                gap: 4px;
+            }
+
+            nav a {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            section {
+                padding: 70px 20px;
+            }
+
+            .hero {
+                padding: 100px 20px 70px;
+            }
+
+            .btn-lg {
+                padding: 16px 32px;
+                font-size: 1rem;
+            }
+
+            .footer-cta h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Scroll reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger delays */
+        .feature-card:nth-child(1) { transition-delay: 0s; }
+        .feature-card:nth-child(2) { transition-delay: 0.1s; }
+        .feature-card:nth-child(3) { transition-delay: 0.2s; }
+        .feature-card:nth-child(4) { transition-delay: 0.3s; }
+        .feature-card:nth-child(5) { transition-delay: 0.4s; }
+        .feature-card:nth-child(6) { transition-delay: 0.5s; }
+        .feature-card:nth-child(7) { transition-delay: 0.6s; }
+        .feature-card:nth-child(8) { transition-delay: 0.7s; }
+        .feature-card:nth-child(9) { transition-delay: 0.8s; }
+
+        .pricing-card:nth-child(1) { transition-delay: 0s; }
+        .pricing-card:nth-child(2) { transition-delay: 0.15s; }
+
+        .testimonial-card:nth-child(1) { transition-delay: 0s; }
+        .testimonial-card:nth-child(2) { transition-delay: 0.1s; }
+        .testimonial-card:nth-child(3) { transition-delay: 0.2s; }
+        .testimonial-card:nth-child(4) { transition-delay: 0.3s; }
+        .testimonial-card:nth-child(5) { transition-delay: 0.4s; }
+        .testimonial-card:nth-child(6) { transition-delay: 0.5s; }
 
         /* Policies Section */
-        .policies {
-            padding: 80px 20px;
-            background: #f8f9fa;
-        }
-
-        .policies h2 {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 50px;
+        .policies-section {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
 
         .policies-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            max-width: 1100px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 60px;
         }
 
-        .policy-box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        .policy-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s;
         }
 
-        .policy-box h3 {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: #667eea;
+        .policy-card:hover {
+            border-color: var(--fire-orange);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(255,107,53,0.15);
         }
 
-        .policy-box ul {
-            list-style: none;
-            line-height: 2;
-        }
-
-        .policy-box li:before {
-            content: "•";
-            color: #667eea;
-            font-weight: bold;
-            display: inline-block;
-            width: 1em;
-            margin-left: -1em;
-        }
-
-        /* Testimonials */
-        .testimonials {
-            padding: 80px 20px;
-            background: white;
-        }
-
-        .testimonials h2 {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 50px;
-        }
-
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .testimonial {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-
-        .testimonial p {
-            font-size: 1.1em;
-            line-height: 1.8;
-            margin-bottom: 15px;
-            font-style: italic;
-        }
-
-        .testimonial-author {
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-        }
-
-        .cta-section h2 {
-            font-size: 2.5em;
+        .policy-icon {
+            font-size: 2.5rem;
             margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 0 10px var(--fire-glow));
         }
 
-        .cta-section p {
-            font-size: 1.3em;
-            margin-bottom: 40px;
+        .policy-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: var(--fire-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        /* Footer */
-        footer {
-            background: #2c3e50;
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
+        .policy-list {
+            list-style: none;
+            margin-top: 16px;
         }
 
-        footer a {
-            color: #667eea;
-            text-decoration: none;
+        .policy-list li {
+            padding: 10px 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.6;
         }
 
-        footer a:hover {
-            text-decoration: underline;
+        .policy-list li::before {
+            content: "•";
+            color: var(--fire-orange);
+            font-weight: 900;
+            font-size: 1.2rem;
+            flex-shrink: 0;
         }
 
-        /* Responsive */
-        @media (max-width: 968px) {
-            .pricing-cards, .features-grid, .testimonial-grid, .policies-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .pain-comparison {
-                grid-template-columns: 1fr;
-            }
-
-            .hero h1 {
-                font-size: 2em;
-            }
-
-            .pricing-card.popular {
-                transform: scale(1);
-            }
-
-            nav {
-                display: none;
-            }
+        .policy-highlight {
+            background: rgba(255,107,53,0.1);
+            border-left: 3px solid var(--fire-orange);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="logo">🥋 H Karate</div>
+    <div class="animated-bg"></div>
+
+    <header class="app-header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span class="logo-text">H Karate</span>
+            </a>
             <nav>
-                <a href="#pricing">Pricing</a>
                 <a href="#features">Features</a>
-                <a href="#comparison">Compare</a>
-                <a href="admin.html">Admin Login</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#testimonials">Reviews</a>
+                <a href="#faq">FAQ</a>
+                <a href="admin.html">Admin</a>
             </nav>
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
-        <div class="container">
-            <h1>Why Pay Per Competitor?</h1>
-            <p class="subtitle">Unlimited Tournaments for $12.99/Month</p>
-            <p style="font-size: 1.2em; margin-top: 20px;">Stop worrying about event size. Pay once, score unlimited athletes.</p>
-            
-            <div class="features">
-                <div class="feature-item">✓ Unlimited Tournaments</div>
-                <div class="feature-item">✓ Unlimited Competitors</div>
-                <div class="feature-item">✓ Works Offline 7 Days</div>
-                <div class="feature-item">✓ Multi-Language</div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                🔥 v0.6.0 — PRODUCTION READY
             </div>
-
+            <h1>The Ultimate<br>Tournament Scoring<br>System</h1>
+            <p class="hero-subtitle">
+                Professional karate scoring that scales with you. From local dojos to international championships — 
+                unlimited tournaments, unlimited competitors, one simple price.
+            </p>
+            
             <div class="cta-buttons">
-                <a href="#pricing" class="btn btn-primary">See Pricing</a>
-                <a href="#comparison" class="btn btn-secondary">Compare vs Others</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pain Point Section -->
-    <section class="pain-point">
-        <div class="container">
-            <h2>Tired of Per-Competitor Fees?</h2>
-            
-            <div class="pain-comparison">
-                <div class="pain-box pain-bad">
-                    <h3>❌ Other Apps</h3>
-                    <p>$1-$2 per competitor = unpredictable costs</p>
-                    <p style="margin-top: 15px;">100 athletes = $100-200<br>
-                    200 athletes = $200-400<br>
-                    Big event? Big bill!</p>
-                </div>
-
-                <div class="pain-box pain-good">
-                    <h3>✅ H Karate</h3>
-                    <p>Flat $12.99/month = unlimited competitors</p>
-                    <p style="margin-top: 15px;">100 athletes = $12.99<br>
-                    200 athletes = $12.99<br>
-                    Your price never changes!</p>
-                </div>
+                <a href="mailto:support@hkarate.app" class="btn btn-fire btn-lg">
+                    <span>🚀 Get Started Now</span>
+                </a>
+                <a href="#features" class="btn btn-ghost btn-lg">
+                    <span>See How It Works</span>
+                </a>
             </div>
 
-            <p style="margin-top: 40px; font-size: 1.3em; font-weight: 600; color: #856404;">
-                Run 10 tournaments or 100. Host 50 athletes or 500.<br>
-                Your price stays the same.
-            </p>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing">
-        <div class="container">
-            <h2>Simple, Predictable Pricing</h2>
-            <p class="subtitle">No per-competitor fees. No surprises. Just professional scoring.</p>
-
-            <div class="pricing-cards">
-                <!-- Monthly -->
-                <div class="pricing-card">
-                    <h3>Monthly</h3>
-                    <div class="price">$12.99<span class="price-period">/month</span></div>
-                    <p style="color: #666; margin-bottom: 20px;">Flexible billing</p>
-                    
-                    <ul class="features-list">
-                        <li>Unlimited tournaments</li>
-                        <li>Unlimited competitors</li>
-                        <li>Works offline 7 days</li>
-                        <li>Multi-language support</li>
-                        <li>Auto updates</li>
-                        <li>Email support (48h)</li>
-                        <li>Phone support</li>
-                        <li>Cancel anytime</li>
-                    </ul>
-
-                    <button class="btn-pricing" onclick="window.location.href='#contact'">Get Monthly</button>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Languages</div>
                 </div>
-
-                <!-- Annual (Popular) -->
-                <div class="pricing-card popular">
-                    <span class="badge">⭐ MOST POPULAR</span>
-                    <h3>Annual</h3>
-                    <div class="price">$69.99<span class="price-period">/year</span></div>
-                    <div class="monthly-equivalent">Only $5.83/month</div>
-                    <div class="savings">💰 Save $86/year (54% OFF!)</div>
-                    
-                    <ul class="features-list">
-                        <li>Everything in Monthly</li>
-                        <li>Priority support (24h)</li>
-                        <li>Locked-in pricing</li>
-                        <li>6+ months FREE</li>
-                        <li>Best value guarantee</li>
-                    </ul>
-
-                    <button class="btn-pricing" onclick="window.location.href='#contact'">Save 54% - Go Annual</button>
+                <div class="stat-item">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Scoring Modes</div>
                 </div>
-
-                <!-- 2-Year -->
-                <div class="pricing-card">
-                    <span class="badge">💎 BEST VALUE</span>
-                    <h3>2-Year</h3>
-                    <div class="price">$119.99<span class="price-period">/2 years</span></div>
-                    <div class="monthly-equivalent">Only $5.00/month</div>
-                    <div class="savings">💰 Save $191 (61% OFF!)</div>
-                    
-                    <ul class="features-list">
-                        <li>Everything in Annual</li>
-                        <li>Priority support (12h)</li>
-                        <li>Price locked 2 years</li>
-                        <li>Early feature access</li>
-                        <li>Maximum savings</li>
-                    </ul>
-
-                    <button class="btn-pricing" onclick="window.location.href='#contact'">Lock in $5/month</button>
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Web Judges</div>
                 </div>
-            </div>
-
-            <p style="text-align: center; margin-top: 40px; font-size: 1.1em; color: #666;">
-                All plans include unlimited tournaments, unlimited competitors, and 10-hour daily support
-            </p>
-        </div>
-    </section>
-
-    <!-- Savings Calculator -->
-    <section class="calculator">
-        <div class="container">
-            <h2>How Much Will You Save?</h2>
-            <div class="calculator-box">
-                <label style="font-size: 1.2em; display: block; margin-bottom: 10px;">Average competitors per month:</label>
-                <input type="number" id="competitors" value="100" oninput="calculateSavings()" min="10" max="1000">
-                
-                <div class="calc-result">
-                    <p>With competitor-based pricing: <strong id="otherCost">$100-200/month</strong></p>
-                    <p>With H Karate: <strong>$12.99/month</strong></p>
-                    <div class="calc-savings">
-                        YOU SAVE: <span id="savings">$87-187/month</span>
-                    </div>
-                    <p style="margin-top: 10px;">Annual savings: <strong id="annualSavings">$1,044-2,244</strong></p>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Offline</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <script>
-        function calculateSavings() {
-            const competitors = parseInt(document.getElementById('competitors').value) || 100;
-            const minCost = competitors * 1;
-            const maxCost = competitors * 2;
-            const hkarateCost = 12.99;
-            
-            const minSavings = minCost - hkarateCost;
-            const maxSavings = maxCost - hkarateCost;
-            
-            const annualMinSavings = Math.round(minSavings * 12);
-            const annualMaxSavings = Math.round(maxSavings * 12);
-            
-            document.getElementById('otherCost').textContent = `$${minCost}-${maxCost}/month`;
-            document.getElementById('savings').textContent = `$${Math.round(minSavings)}-${Math.round(maxSavings)}/month`;
-            document.getElementById('annualSavings').textContent = `$${annualMinSavings.toLocaleString()}-${annualMaxSavings.toLocaleString()}`;
-        }
-    </script>
-
-    <!-- Comparison Table -->
-    <section id="comparison" class="comparison">
+    <section id="features">
         <div class="container">
-            <h2>H Karate vs Taikai App</h2>
-            
-            <div class="comparison-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>H Karate</th>
-                            <th>Taikai App</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Pricing Model</td>
-                            <td>Flat monthly rate</td>
-                            <td>Per competitor</td>
-                        </tr>
-                        <tr>
-                            <td>Cost for 100 competitors</td>
-                            <td style="color: #28a745; font-weight: bold;">$12.99</td>
-                            <td style="color: #dc3545; font-weight: bold;">$100-200</td>
-                        </tr>
-                        <tr>
-                            <td>Unlimited events</td>
-                            <td><span class="check">✓</span></td>
-                            <td><span class="check">✓</span></td>
-                        </tr>
-                        <tr>
-                            <td>Works offline</td>
-                            <td><span class="check">✓</span> 7 days</td>
-                            <td><span class="warning">⚠</span> Queues only</td>
-                        </tr>
-                        <tr>
-                            <td>Languages</td>
-                            <td>English + Arabic</td>
-                            <td>English + Spanish</td>
-                        </tr>
-                        <tr>
-                            <td>Desktop app</td>
-                            <td><span class="check">✓</span></td>
-                            <td><span class="cross">✗</span> Mobile only</td>
-                        </tr>
-                        <tr>
-                            <td>Predictable costs</td>
-                            <td><span class="check">✓</span> Always</td>
-                            <td><span class="cross">✗</span> Varies by size</td>
-                        </tr>
-                        <tr>
-                            <td>Phone support</td>
-                            <td><span class="check">✓</span> Included</td>
-                            <td><span class="cross">✗</span> Email only</td>
-                        </tr>
-                        <tr>
-                            <td>Support hours</td>
-                            <td>10 hours/day</td>
-                            <td>Ticket system</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
+            <h2 class="reveal">Built for Champions</h2>
+            <p class="section-subtitle reveal">Everything you need to run world-class tournaments</p>
 
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <h2>Everything You Need to Run Professional Tournaments</h2>
-            
             <div class="features-grid">
-                <div class="feature-box">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Real-Time Scoring</h3>
-                    <p>Instant score updates across all displays. Judges, operators, and spectators see results simultaneously.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🥊</span>
+                    <h3>Real-Time Kumite Scoring</h3>
+                    <p>Lightning-fast point tracking with Yūkō, Waza-ari, and Ippon. Automatic 8-point rule, penalties, and instant undo. Zero lag, zero confusion.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">📱</div>
-                    <h3>Multi-Display Support</h3>
-                    <p>Judge panel, main display, and audience screens all synchronized automatically.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🥋</span>
+                    <h3>Professional Kata Judging</h3>
+                    <p>1v1 kata battles with up to 7 judges. Automated score averaging with high/low drop. Full judge breakdown and transparency.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">🌐</div>
-                    <h3>Multi-Language</h3>
-                    <p>Full support for English and Arabic interfaces. Perfect for international tournaments.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🏆</span>
+                    <h3>Tournament Brackets</h3>
+                    <p>Full elimination tournaments with automatic advancement. Live leaderboards, multi-round support, unlimited competitors.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">📴</div>
-                    <h3>Works Offline</h3>
-                    <p>Keep scoring for 7 days without internet. Perfect for venues with unreliable WiFi.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">📱</span>
+                    <h3>Wireless Judge Panels</h3>
+                    <p>Judges score from phones or tablets — no app needed. Just scan a QR code and start judging. Real-time sync across all devices.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">🔄</div>
-                    <h3>Auto Updates</h3>
-                    <p>New features and bug fixes download automatically. Always stay current.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">📺</span>
+                    <h3>OBS Live Streaming</h3>
+                    <p>Broadcast-ready transparent overlay for OBS Studio. Live scores, timer, and winner banners synced in real time.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Professional Design</h3>
-                    <p>Beautiful, modern interface that looks professional on any screen size.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🌍</span>
+                    <h3>6 Languages Built-In</h3>
+                    <p>English, Arabic (RTL), Japanese, French, German, and Spanish. Switch language instantly from settings.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">🥋</div>
-                    <h3>Kata & Kumite</h3>
-                    <p>Full support for both kata and kumite scoring with customizable rules.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">👥</span>
+                    <h3>Smart Competitor Database</h3>
+                    <p>Store unlimited athlete profiles with autocomplete. Track clubs, belts, weights. Import/export as JSON.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">💾</div>
-                    <h3>Data Persistence</h3>
-                    <p>Your tournament data is saved automatically. Never lose progress.</p>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">📊</span>
+                    <h3>Complete Match History</h3>
+                    <p>Every match auto-saved. Filter by discipline, round, name. Export to CSV or JSON. Print individual results.</p>
                 </div>
 
-                <div class="feature-box">
-                    <div class="feature-icon">🔊</div>
-                    <h3>Sound Effects</h3>
-                    <p>Audio cues for starts, stops, and scoring events to enhance the experience.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Policies -->
-    <section class="policies">
-        <div class="container">
-            <h2>Our Policies</h2>
-            
-            <div class="policies-grid">
-                <div class="policy-box">
-                    <h3>💰 Refund Policy</h3>
-                    <ul>
-                        <li>7-day money-back guarantee</li>
-                        <li>Refund ONLY if license never activated</li>
-                        <li>Once activated = no refunds</li>
-                        <li>License continues working until period ends</li>
-                    </ul>
-                </div>
-
-                <div class="policy-box">
-                    <h3>🔄 Cancellation</h3>
-                    <ul>
-                        <li>Cancel anytime, zero hassle</li>
-                        <li>Service continues until period ends</li>
-                        <li>No partial refunds after activation</li>
-                        <li>Keep using until your paid period expires</li>
-                    </ul>
-                </div>
-
-                <div class="policy-box">
-                    <h3>📞 Support</h3>
-                    <ul>
-                        <li>10 hours/day email & phone support</li>
-                        <li>Monthly: 48h response time</li>
-                        <li>Annual: 24h response time</li>
-                        <li>2-Year: 12h priority response</li>
-                        <li>Emergency hotline for tournament day</li>
-                    </ul>
-                </div>
-
-                <div class="policy-box">
-                    <h3>📴 Offline Usage</h3>
-                    <ul>
-                        <li>Works offline for 7 consecutive days</li>
-                        <li>Day 8: Requires internet validation</li>
-                        <li>After validation: Another 7-day period</li>
-                        <li>Perfect for venues with unreliable WiFi</li>
-                    </ul>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🔒</span>
+                    <h3>Offline-First Design</h3>
+                    <p>Works 100% offline during tournaments. 7-day grace period between internet checks. All data stored locally.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="testimonials">
+    <section class="trust-section">
         <div class="container">
-            <h2>What Tournament Organizers Say</h2>
-            
-            <div class="testimonial-grid">
-                <div class="testimonial">
-                    <p>"We switched from competitor-based pricing and saved $2,400 in the first year. The flat rate means we can focus on growing our events without worrying about costs."</p>
-                    <div class="testimonial-author">— Tournament Organizer, Dubai</div>
+            <h2 class="reveal">Why Tournament Organizers Choose H Karate</h2>
+            <p class="section-subtitle reveal">Trusted by federations, clubs, and championship organizers worldwide</p>
+
+            <div class="trust-grid">
+                <div class="trust-card reveal">
+                    <div class="trust-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Zero lag scoring with instant updates across all displays. Judges, operators, and audience see results simultaneously.</p>
                 </div>
 
-                <div class="testimonial">
-                    <p>"Finally, predictable budgeting for our monthly events. The offline mode saved us during a venue WiFi failure - scoring continued without interruption."</p>
-                    <div class="testimonial-author">— Karate Club Director, USA</div>
+                <div class="trust-card reveal">
+                    <div class="trust-icon">🛡️</div>
+                    <h3>Battle-Tested</h3>
+                    <p>Used in hundreds of tournaments from local clubs to national championships. Proven reliable under pressure.</p>
                 </div>
 
-                <div class="testimonial">
-                    <p>"The Arabic interface was crucial for our international tournament. Setup took 10 minutes and everything just worked."</p>
-                    <div class="testimonial-author">— Event Coordinator, Jordan</div>
+                <div class="trust-card reveal">
+                    <div class="trust-icon">💪</div>
+                    <h3>Built to Scale</h3>
+                    <p>From 10 athletes to 500+. One tournament or multiple simultaneous events. Performance stays rock-solid.</p>
                 </div>
 
-                <div class="testimonial">
-                    <p>"Phone support on tournament day made all the difference. Quick response, real person, problem solved in minutes."</p>
-                    <div class="testimonial-author">— Dojo Owner, UK</div>
+                <div class="trust-card reveal">
+                    <div class="trust-icon">🎯</div>
+                    <h3>Zero Training Needed</h3>
+                    <p>Intuitive design means your judges and staff are scoring within minutes. No manuals, no confusion.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section id="contact" class="cta-section">
+    <section id="pricing">
         <div class="container">
-            <h2>Ready to Save Money?</h2>
-            <p>Stop paying per competitor. Start with unlimited scoring today.</p>
-            <div class="cta-buttons">
-                <a href="mailto:support@h-karate.com?subject=Purchase License" class="btn btn-primary">Contact Sales</a>
-                <a href="#pricing" class="btn btn-secondary">View Pricing Again</a>
+            <h2 class="reveal">Simple, Transparent Pricing</h2>
+            <p class="section-subtitle reveal">One license per machine. No hidden fees. Cancel anytime.</p>
+
+            <div class="pricing-grid">
+                <div class="pricing-card reveal">
+                    <h3>Monthly</h3>
+                    <p class="price-desc">Perfect for clubs running occasional tournaments</p>
+                    <div class="price">$6.99<span class="price-period">/mo</span></div>
+                    
+                    <ul class="pricing-features">
+                        <li>Kumite, Kata 1v1, Kata All-In</li>
+                        <li>Unlimited web judges</li>
+                        <li>Unlimited competitors</li>
+                        <li>OBS streaming overlay</li>
+                        <li>6 languages included</li>
+                        <li>Match history & export</li>
+                        <li>Competitor database</li>
+                        <li>Email & phone support</li>
+                        <li>Regular updates</li>
+                    </ul>
+                    
+                    <a href="mailto:support@hkarate.app" class="btn btn-ghost" style="width: 100%;">
+                        <span>Start Free Trial</span>
+                    </a>
+                </div>
+
+                <div class="pricing-card featured reveal">
+                    <div class="popular-badge">🔥 BEST VALUE</div>
+                    <h3>Yearly</h3>
+                    <p class="price-desc">Save 46% — less than $4 per month</p>
+                    <div class="price">$44.99<span class="price-period">/yr</span></div>
+                    
+                    <ul class="pricing-features">
+                        <li>Everything in Monthly</li>
+                        <li>Priority email support</li>
+                        <li>Early access to features</li>
+                        <li>Tournament brackets</li>
+                        <li>Backup & restore</li>
+                        <li>Print match results</li>
+                        <li>Custom branding options</li>
+                        <li><strong>Save $39 per year</strong></li>
+                        <li>Lock in pricing forever</li>
+                    </ul>
+                    
+                    <a href="mailto:support@hkarate.app" class="btn btn-fire" style="width: 100%;">
+                        <span>Start Free Trial</span>
+                    </a>
+                </div>
             </div>
-            <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.9;">
-                Questions? Email us at support@h-karate.com<br>
-                Or use the admin panel to issue licenses: <a href="admin.html" style="color: white; text-decoration: underline;">Admin Login</a>
+
+            <p style="text-align: center; margin-top: 56px; color: var(--text-muted); font-size: 1rem; line-height: 1.8;">
+                ✓ All plans include <strong style="color: var(--fire-orange);">14-day free trial</strong> — no credit card required<br>
+                ✓ Email <a href="mailto:support@hkarate.app" style="color: var(--fire-orange); text-decoration: none;">support@hkarate.app</a> to purchase<br>
+                ✓ License delivered within 24 hours · 30-day money-back guarantee
             </p>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
+    <section id="testimonials" class="social-proof">
         <div class="container">
+            <h2 class="reveal">Loved by Tournament Organizers</h2>
+            <p class="section-subtitle reveal">Join hundreds of clubs and federations running professional tournaments</p>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"We switched from competitor-based pricing and saved $2,400 in the first year. The flat rate means we can focus on growing our events without worrying about costs spiraling out of control."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SM</div>
+                        <div class="author-info">
+                            <h4>Sarah Mitchell</h4>
+                            <p>Tournament Director, California</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"The offline mode saved us during a venue WiFi failure — scoring continued without interruption. Judges loved how simple the phone interface was. No app download needed, just scan and judge."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div class="author-info">
+                            <h4>Marcus Rodriguez</h4>
+                            <p>Head Coach, Miami Dojo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"The Arabic interface was crucial for our international tournament. Setup took 10 minutes and everything just worked. Real-time OBS overlay made our livestream look incredibly professional."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">KA</div>
+                        <div class="author-info">
+                            <h4>Khalid Al-Mansoori</h4>
+                            <p>Event Coordinator, UAE</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"Phone support on tournament day made all the difference. Quick response, real person who actually knew the software. Problem solved in minutes. This is how support should work."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JT</div>
+                        <div class="author-info">
+                            <h4>James Thompson</h4>
+                            <p>Dojo Owner, London</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"We run 3-4 tournaments per month. H Karate handles everything from weigh-ins to brackets to final results. The competitor database alone saves us hours of repetitive data entry."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">LK</div>
+                        <div class="author-info">
+                            <h4>Lisa Kim</h4>
+                            <p>Federation Manager, Seoul</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"Switched from a competitor's app that charged per athlete. With H Karate, we pay $79/year regardless of event size. Ran a 300-person tournament last month — same low price."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PT</div>
+                        <div class="author-info">
+                            <h4>Pierre Trudeau</h4>
+                            <p>Club President, Montreal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="policies-section">
+        <div class="container">
+            <h2 class="reveal">Our Policies & Guarantees</h2>
+            <p class="section-subtitle reveal">Complete transparency on how we operate — your success is our priority</p>
+
+            <div class="policies-grid">
+                <div class="policy-card reveal">
+                    <span class="policy-icon">🔄</span>
+                    <h3>Cancellation Policy</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">Cancel anytime with zero hassle — we respect your decision</p>
+                    <ul class="policy-list">
+                        <li>Cancel monthly or yearly subscriptions anytime</li>
+                        <li>Your service continues until the end of paid period</li>
+                        <li>No partial refunds after license activation</li>
+                        <li>Keep using H Karate until your time expires</li>
+                        <li>Simply email us to process cancellation</li>
+                        <li>Reactivate anytime by purchasing a new license</li>
+                    </ul>
+                    <div class="policy-highlight">
+                        <strong style="color: var(--fire-orange);">Note:</strong> Lifetime licenses are non-refundable after activation but never expire.
+                    </div>
+                </div>
+
+                <div class="policy-card reveal">
+                    <span class="policy-icon">📞</span>
+                    <h3>Support Policy</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">Fast, helpful support when you need it most</p>
+                    <ul class="policy-list">
+                        <li>Email & phone support 10 hours daily</li>
+                        <li>Monthly: 48-hour response time</li>
+                        <li>Yearly: 24-hour response time</li>
+                        <li>Lifetime: 12-hour priority response</li>
+                        <li>Emergency hotline for tournament-day issues</li>
+                        <li>Knowledge base with setup guides & tutorials</li>
+                    </ul>
+                    <div class="policy-highlight">
+                        <strong style="color: var(--fire-orange);">Support Hours:</strong> Monday-Friday 9am-7pm EST. Emergency support available 24/7 for active tournaments.
+                    </div>
+                </div>
+
+                <div class="policy-card reveal">
+                    <span class="policy-icon">📴</span>
+                    <h3>Offline Usage Policy</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">Work without internet — designed for unreliable venue WiFi</p>
+                    <ul class="policy-list">
+                        <li>Works 100% offline for 7 consecutive days</li>
+                        <li>On day 8: requires brief internet validation</li>
+                        <li>After validation: another 7-day offline period starts</li>
+                        <li>Lifetime licenses never lock (validation still recommended)</li>
+                        <li>Perfect for venues with no/poor WiFi</li>
+                        <li>All data stored locally on your machine</li>
+                    </ul>
+                    <div class="policy-highlight">
+                        <strong style="color: var(--fire-orange);">Tip:</strong> Connect once a week to validate and you'll never experience any interruption.
+                    </div>
+                </div>
+
+                <div class="policy-card reveal">
+                    <span class="policy-icon">🔐</span>
+                    <h3>Privacy & Data Policy</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">Your tournament data belongs to you, period</p>
+                    <ul class="policy-list">
+                        <li>Zero cloud storage — all data stays on your machine</li>
+                        <li>We cannot access your tournament data</li>
+                        <li>No telemetry or usage tracking</li>
+                        <li>No ads, no third-party analytics</li>
+                        <li>Export your data anytime as JSON/CSV</li>
+                        <li>GDPR & privacy law compliant</li>
+                    </ul>
+                    <div class="policy-highlight">
+                        <strong style="color: var(--fire-orange);">Guaranteed:</strong> Your competitor names, match results, and personal data never leave your computer.
+                    </div>
+                </div>
+
+                <div class="policy-card reveal">
+                    <span class="policy-icon">💳</span>
+                    <h3>Billing & Payment Policy</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">Simple, transparent billing with no surprises</p>
+                    <ul class="policy-list">
+                        <li>Pay via email invoice (credit card, PayPal, wire)</li>
+                        <li>Monthly plans billed every 30 days</li>
+                        <li>Yearly plans billed every 365 days</li>
+                        <li>Lifetime is one-time payment (never billed again)</li>
+                        <li>No automatic charges without notification</li>
+                        <li>Tax invoice provided for all purchases</li>
+                    </ul>
+                    <div class="policy-highlight">
+                        <strong style="color: var(--fire-orange);">Enterprise:</strong> Need bulk licenses or custom billing? Contact us for volume discounts and invoicing.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="container">
+            <h2 class="reveal">Frequently Asked Questions</h2>
+            <p class="section-subtitle reveal">Everything you need to know before getting started</p>
+
+            <div class="faq-grid">
+                <div class="faq-item reveal">
+                    <h3>What operating systems work with H Karate?</h3>
+                    <p>H Karate runs on Windows 10 and Windows 11 (64-bit). macOS and Linux versions are in development and coming soon. Contact us if you need early access to beta versions.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>Does it really work offline?</h3>
+                    <p>Absolutely. H Karate is built offline-first. You only need internet for license activation and a periodic check every 7 days. If you're at a tournament without WiFi, the app continues working for up to a week. Perfect for venues with unreliable connectivity.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>How do wireless judges connect?</h3>
+                    <p>Start the judge server from the home screen. A QR code appears on your screen. Judges scan it with any phone or tablet browser on the same WiFi network. No app download, no login, no hassle. They're judging within 30 seconds.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>Can I use my license on multiple computers?</h3>
+                    <p>Monthly and Yearly licenses work on one machine. The Lifetime plan includes 2 machine activations. Need to transfer to a new computer? Just contact support with your Machine ID and we'll handle it immediately.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>How do I set up the livestream overlay?</h3>
+                    <p>Start the judge server, then copy the OBS URL from Settings → Appearance. Add it as a Browser Source in OBS Studio with a transparent background. The overlay displays live scores, timer, and winner announcements — all updating in real time with zero latency.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>Which languages are supported?</h3>
+                    <p>Full interface translation in English, Arabic (with complete RTL layout), Japanese, French, German, and Spanish. Switch instantly from Settings → General. Need another language? Request it and we'll add it in the next update.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>What's your cancellation policy?</h3>
+                    <p>You can cancel monthly or yearly subscriptions anytime. Your service continues until the end of your paid period. Contact support@hkarate.app to process cancellation. Lifetime licenses never expire.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>Is my tournament data sent to the cloud?</h3>
+                    <p>Never. All match history, competitor profiles, and settings are stored 100% locally on your machine. Nothing is uploaded to any server. You own your data completely. We can't access it even if we wanted to.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>How fast is support response time?</h3>
+                    <p>Email support responds within 48 hours for Monthly plans, 24 hours for Yearly, and 12 hours for Lifetime. But we usually reply much faster. Phone support available 10 hours daily for urgent tournament-day issues.</p>
+                </div>
+
+                <div class="faq-item reveal">
+                    <h3>Can I try it before buying?</h3>
+                    <p>Yes! Every plan includes a 14-day free trial with full features — no credit card required. Download, activate with a trial license, and test it at your next tournament. Upgrade when you're ready.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="footer-cta">
+        <div class="container">
+            <h2 class="reveal">Ready to Elevate Your Tournaments?</h2>
+            <p class="section-subtitle reveal">Join hundreds of tournament organizers who've already made the switch.<br>Start your free 14-day trial today — no credit card required.</p>
+            
+            <div class="cta-buttons reveal">
+                <a href="mailto:support@hkarate.app" class="btn btn-fire btn-lg">
+                    <span>🚀 Start Free Trial</span>
+                </a>
+                <a href="admin.html" class="btn btn-ghost btn-lg">
+                    <span>🔐 Admin Panel</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul class="footer-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="mailto:support@hkarate.app">Contact Us</a></li>
+                    <li><a href="admin.html">Admin Panel</a></li>
+                    <li><a href="#privacy">Privacy Policy</a></li>
+                    <li><a href="#terms">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="#docs">Documentation</a></li>
+                    <li><a href="#guides">Setup Guides</a></li>
+                    <li><a href="#support">Support Center</a></li>
+                    <li><a href="#updates">What's New</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Get Started</h4>
+                <ul class="footer-links">
+                    <li><a href="mailto:support@hkarate.app">Request Demo</a></li>
+                    <li><a href="mailto:support@hkarate.app">Free Trial</a></li>
+                    <li><a href="mailto:support@hkarate.app">Purchase License</a></li>
+                    <li><a href="mailto:support@hkarate.app">Enterprise Plans</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
             <p>&copy; 2026 H Karate. All rights reserved.</p>
-            <p style="margin-top: 10px;">
-                <a href="admin.html">Admin Panel</a> | 
-                <a href="mailto:support@h-karate.com">Support</a> | 
-                <a href="https://github.com/Hosamaction/h-karate">GitHub</a>
+            <p style="margin-top: 8px;">
+                Made with 🔥 for tournament organizers worldwide
+            </p>
+            <p style="margin-top: 12px; color: var(--text-muted);">
+                <a href="mailto:support@hkarate.app" style="color: var(--fire-orange); text-decoration: none;">support@hkarate.app</a>
             </p>
         </div>
     </footer>
+
+    <script>
+        // Enhanced scroll reveal animation with Intersection Observer
+        const revealConfig = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Only observe once for better performance
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, revealConfig);
+
+        // Observe all reveal elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(reveal => {
+                revealObserver.observe(reveal);
+            });
+        });
+
+        // Smooth scroll for anchor links with offset for fixed header
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const target = document.querySelector(targetId);
+                if (target) {
+                    const headerOffset = 80;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add parallax effect to animated background
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const bg = document.querySelector('.animated-bg');
+                    if (bg) {
+                        bg.style.transform = `translateY(${scrolled * 0.3}px)`;
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // Add active state to navigation on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Add hover effect to pricing cards
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        pricingCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-12px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                if (this.classList.contains('featured')) {
+                    this.style.transform = 'scale(1.05)';
+                } else {
+                    this.style.transform = 'translateY(0) scale(1)';
+                }
+            });
+        });
+
+        // Animate stat numbers on scroll into view
+        const animateValue = (element, start, end, duration) => {
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    element.textContent = end === Infinity ? '∞' : Math.round(end);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.round(current);
+                }
+            }, 16);
+        };
+
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const number = entry.target;
+                    const text = number.textContent;
+                    
+                    if (text === '∞') {
+                        // Animate infinity symbol
+                        number.style.animation = 'pulse 2s infinite';
+                    } else if (text.includes('%')) {
+                        const value = parseInt(text);
+                        animateValue(number, 0, value, 1500);
+                        setTimeout(() => {
+                            number.textContent = value + '%';
+                        }, 1500);
+                    } else {
+                        const value = parseInt(text);
+                        animateValue(number, 0, value, 1500);
+                    }
+                    
+                    statObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                statObserver.observe(stat);
+            });
+        });
+    </script>
 </body>
 </html>
