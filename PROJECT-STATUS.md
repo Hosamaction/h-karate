@@ -14,7 +14,7 @@
 - **Status:** ✅ Live
 - **Features:**
   - Fire-themed professional design
-  - Pricing: $9/mo, $79/yr, $199 lifetime
+  - Pricing: $8.99/mo, $59.99/yr, $189.99/2yr
   - Lifetime option hidden from public (visible in admin only)
 
 ### License Server
@@ -91,9 +91,10 @@ H Karate/
 6. Encrypted local storage (AES-256-CBC)
 
 ### License Plans
-- **Monthly:** $9/mo (30 days)
-- **Yearly:** $79/yr (365 days)
-- **Lifetime:** $199 (100 years = 36500 days)
+- **Monthly:** $8.99/mo (30 days)
+- **Yearly:** $59.99/yr (365 days)  
+- **2-Year:** $189.99 (730 days)
+- **Lifetime:** $199 (36500 days) - *Hidden from public, available in admin only*
 
 ---
 
