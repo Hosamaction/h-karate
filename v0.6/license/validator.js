@@ -23,7 +23,7 @@ MCowBQYDK2VwAyEApwudg1NqHYrBuDBuO8YEp0rIbH6i9KwHaf0ktVEh77w=
 -----END PUBLIC KEY-----`;
 
 // ── Server URL ────────────────────────────────────────────────────────────────
-const LICENSE_SERVER = 'https://hkarate-license-server-production.up.railway.app';
+const LICENSE_SERVER = 'https://h-karate-vercel-server.vercel.app';
 
 // ── Encryption key for local license storage ──────────────────────────────────
 // Derived from machine ID so the encrypted file is useless on another machine
