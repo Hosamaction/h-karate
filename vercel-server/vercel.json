@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/", "destination": "/api/license?action=health" },
+    { "source": "/license/health", "destination": "/api/license?action=health" },
+    { "source": "/license/activate", "destination": "/api/license?action=activate" },
+    { "source": "/license/validate", "destination": "/api/license?action=validate" },
+    { "source": "/license/issue", "destination": "/api/license?action=issue" },
+    { "source": "/license/revoke", "destination": "/api/license?action=revoke" },
+    { "source": "/license/licenses", "destination": "/api/license?action=licenses" }
+  ]
+}
