@@ -92,6 +92,7 @@ function onlineValidate(licenseFile, machineId) {
   return new Promise((resolve) => {
     const body = JSON.stringify({ licenseFile, machineId });
     const url  = new URL('/api/license?action=validate', LICENSE_SERVER);
+    console.log('[License] Validating online at:', url.href);
     const opts = {
       hostname: url.hostname,
       port:     url.port || 443,
@@ -104,14 +105,15 @@ function onlineValidate(licenseFile, machineId) {
       let data = '';
       res.on('data', c => data += c);
       res.on('end', () => {
+        console.log('[License] Server response:', data);
         try {
           const r = JSON.parse(data);
           resolve({ ok: r.ok === true, reason: r.error || 'ok' });
         } catch(_) { resolve({ ok: false, reason: 'parse_error' }); }
       });
     });
-    req.on('error', () => resolve({ ok: null, reason: 'offline' }));
-    req.on('timeout', () => { req.destroy(); resolve({ ok: null, reason: 'timeout' }); });
+    req.on('error', (err) => { console.log('[License] Request error:', err.message); resolve({ ok: null, reason: 'offline' }); });
+    req.on('timeout', () => { console.log('[License] Request timeout'); req.destroy(); resolve({ ok: null, reason: 'timeout' }); });
     req.write(body);
     req.end();
   });
@@ -184,19 +186,28 @@ async function validateLicense(licenseFile, licensePath) {
  */
 async function activateLicense(licenseFile, licensePath) {
   const machineId = getMachineId();
+  console.log('[License] Activating license for machine:', machineId);
 
   // Basic signature check first
   if (!verifySignature(licenseFile.payload, licenseFile.signature)) {
+    console.log('[License] Signature verification failed');
     return { ok: false, reason: 'invalid_signature' };
   }
 
   const data = decodePayload(licenseFile.payload);
-  if (!data) return { ok: false, reason: 'malformed' };
-  if (Date.now() > data.expiresAt) return { ok: false, reason: 'expired' };
+  if (!data) {
+    console.log('[License] Payload decode failed');
+    return { ok: false, reason: 'malformed' };
+  }
+  if (Date.now() > data.expiresAt) {
+    console.log('[License] License expired');
+    return { ok: false, reason: 'expired' };
+  }
 
   // Send to server for machine binding
   const body = JSON.stringify({ licenseFile, machineId });
   const url  = new URL('/api/license?action=activate', LICENSE_SERVER);
+  console.log('[License] Activating at:', url.href);
 
   const boundFile = await new Promise((resolve) => {
     const opts = {
