@@ -458,7 +458,7 @@
                 return;
             }
 
-            fetch(`${API_URL}/admin/licenses`, {
+            fetch(`${API_URL}/api/license?action=licenses`, {
                 headers: {
                     'x-admin-secret': secret
                 }
@@ -496,7 +496,7 @@
                 return;
             }
 
-            fetch(`${API_URL}/issue`, {
+            fetch(`${API_URL}/api/license?action=issue`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -543,7 +543,7 @@
                 return;
             }
 
-            fetch(`${API_URL}/revoke`, {
+            fetch(`${API_URL}/api/license?action=revoke`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -567,7 +567,7 @@
         }
 
         function loadLicenses() {
-            fetch(`${API_URL}/admin/licenses`, {
+            fetch(`${API_URL}/api/license?action=licenses`, {
                 headers: {
                     'x-admin-secret': adminSecret
                 }

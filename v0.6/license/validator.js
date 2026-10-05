@@ -91,11 +91,11 @@ function decodePayload(payloadB64) {
 function onlineValidate(licenseFile, machineId) {
   return new Promise((resolve) => {
     const body = JSON.stringify({ licenseFile, machineId });
-    const url  = new URL('/validate', LICENSE_SERVER);
+    const url  = new URL('/api/license?action=validate', LICENSE_SERVER);
     const opts = {
       hostname: url.hostname,
       port:     url.port || 443,
-      path:     url.pathname,
+      path:     url.pathname + url.search,
       method:   'POST',
       headers:  { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
       timeout:  8000
@@ -196,13 +196,13 @@ async function activateLicense(licenseFile, licensePath) {
 
   // Send to server for machine binding
   const body = JSON.stringify({ licenseFile, machineId });
-  const url  = new URL('/activate', LICENSE_SERVER);
+  const url  = new URL('/api/license?action=activate', LICENSE_SERVER);
 
   const boundFile = await new Promise((resolve) => {
     const opts = {
       hostname: url.hostname,
       port:     url.port || 443,
-      path:     url.pathname,
+      path:     url.pathname + url.search,
       method:   'POST',
       headers:  { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
       timeout:  10000
