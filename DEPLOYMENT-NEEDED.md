@@ -2,9 +2,9 @@
 
 ## Changes Made:
 ✅ Updated website pricing to:
-- Monthly: $8.99/mo (was $6.99)
-- Yearly: $59.99/yr (was $44.99)
-- 2-Year: $189.99/2yr (NEW tier added)
+- Monthly: $8.99/mo
+- Yearly: $79.99/yr
+- 2-Year: $109.99/2yr
 
 ✅ Updated all documentation files
 ✅ Committed and pushed to GitHub
@@ -28,8 +28,8 @@ After deploying, visit: https://h-karate-app.web.app
 
 You should see the new pricing:
 - $8.99/mo
-- $59.99/yr  
-- $189.99/2yr
+- $79.99/yr  
+- $109.99/2yr
 
 ---
 

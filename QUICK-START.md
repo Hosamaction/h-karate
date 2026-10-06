@@ -35,8 +35,8 @@
 ## 💰 Pricing
 
 - Monthly: **$8.99** (30 days)
-- Yearly: **$59.99** (365 days)
-- 2-Year: **$189.99** (730 days)
+- Yearly: **$79.99** (365 days)
+- 2-Year: **$109.99** (730 days)
 - Lifetime: **$199** (36500 days) - *Admin only, not on website*
 
 ---
